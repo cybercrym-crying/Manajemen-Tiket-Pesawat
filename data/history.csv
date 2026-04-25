@@ -1,0 +1,6 @@
+ticketID,username,flightID,seat,status,date
+TIX001,akbar_rachim,FL001,12A,Paid,2026-04-20
+TIX002,akbar_rachim,FL003,05C,Pending,2026-04-21
+TIX003,pirlo_syabila,FL001,12B,Paid,2026-04-20
+TIX004,budi_santoso,FL005,01A,Canceled,2026-04-19
+TIX005,siti_aminah,FL002,15F,Finished,2026-04-18
