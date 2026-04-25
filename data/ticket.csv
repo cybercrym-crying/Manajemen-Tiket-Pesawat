@@ -1,0 +1,6 @@
+ticketID,customerUsername,flightID,seat,status
+TIX001,akbar_rachim,FL001,12A,Paid
+TIX002,akbar_rachim,FL003,05C,Pending
+TIX003,pirlo_syabila,FL001,12B,Paid
+TIX004,budi_santoso,FL005,01A,Paid
+TIX005,siti_aminah,FL002,15F,Canceled
