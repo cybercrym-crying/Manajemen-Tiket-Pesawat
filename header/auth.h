@@ -3,5 +3,5 @@
 #include <string>
 #include <vector>
 
-void loginAccount(const vector<User> &user);
+User *loginAccount(const vector<User> &user);
 void registerAccount(vector<User> &user);

@@ -21,6 +21,7 @@ bool cancelTicket(vector<Ticket> &ticket, vector<Flight> &flights,
   // jika sudah di bayar maka tidak bisa di lakukan canceled
   // ubah juga ukuran seat pada flight yang di pesan
   // tambah jumlah seat karena sesua jumlah seat yang di batalkan
+  return true;
 }
 void viewHistoryTicket(vector<Ticket> &ticket, string username, Role role) {
   // melihat history pesanan ticket sesuai username dan role

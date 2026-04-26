@@ -8,6 +8,10 @@
 #include <vector>
 using namespace std;
 
+void customerMenu(const string username) {
+  // menu customer
+}
+
 void bookingTicket(const string username) {
   //  minta input dulu user  mau kemana
   //  tampilkan jadwal flight sesaui destinasi
@@ -25,6 +29,7 @@ bool cancelTicket(const string username) {
   // perlihatkan ticket yang di pesan
   // masukan input nomor ticket yang ingin di batalkan
   // pangggil cancelTicket dari ticket.h
+  return true;
 }
 void updateAccount(vector<User> &user, const string username) {
   // minta input nama,password yang baru kosongkan jika tidak mau bangung logic
