@@ -9,6 +9,8 @@ struct User {
   string password;
   bool isActive;
   Role role;
+  User(string u, string p)
+      : username(u), password(p), isActive(true), role(CUSTOMER) {}
 };
 
 struct Flight {
@@ -18,6 +20,8 @@ struct Flight {
   string time;
   int price;
   int capacity;
+  Flight(string f, string a, string d, string t, int p, int c)
+      : flightID(f), airlineName(a), destination(d), time(t), capacity(c) {}
 };
 
 struct Ticket {
@@ -26,4 +30,8 @@ struct Ticket {
   string customerName;
   string bookingStatus;
   string seatNumber;
+  string date;
+  Ticket(string t, string f, string c, string b, string s, string d)
+      : ticketID(t), flightID(f), customerName(c), bookingStatus(b),
+        seatNumber(s), date(d) {}
 };

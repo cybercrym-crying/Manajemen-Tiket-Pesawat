@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 
+void loadFile(vector<User> &user, vector<Ticket> &ticket,
+              vector<Flight> flights);
+
 void addUserFile(vector<User> &user);
 void removeUserFile(vector<User> &user);
 void updateUserFile(vector<User> &user);
