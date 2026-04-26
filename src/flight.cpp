@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-void viewFlight(const vector<Flight> &flights, string &username) {
+void viewFlight(const vector<Flight> &flights, string username, Role role) {
   // dapat melihat penerbangan yang sudah di buat, jika role admin dapat melihat
   // semuanya jika role airline dapat melihat jadwal penerbangan dirinya
   // role customer dapat melihat jadwal penerbangan yang tersedia mulai hari ini

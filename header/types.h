@@ -21,7 +21,8 @@ struct Flight {
   int price;
   int capacity;
   Flight(string f, string a, string d, string t, int p, int c)
-      : flightID(f), airlineName(a), destination(d), time(t), capacity(c) {}
+      : flightID(f), airlineName(a), destination(d), time(t), price(p),
+        capacity(c) {}
 };
 
 struct Ticket {
