@@ -4,8 +4,8 @@
 #include <vector>
 using namespace std;
 
-void viewAllFlight(const vector<Flight> &flights);
+void viewFlight(const vector<Flight> &flights, string username, Role role);
 void searchFlight(const vector<Flight> &flights, string destination);
-void addFlight(vector<Flight> &flights);
-void deleteFlight(vector<Flight> &flights);
-void editFlight(vector<Flight> &flights);
+bool addFlightData(vector<Flight> &flights, Flight &dataFlights);
+bool deleteFlightData(vector<Flight> &flights, string &idFlights);
+bool editFlightData(vector<Flight> &flights, Flight &dataFlights);
