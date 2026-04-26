@@ -7,7 +7,7 @@
 using namespace std;
 
 void airlineMenu(const string username) {
-  // tampilan menu pilihan aksi atau keluar aksi
+  // tampilan menu airline pilihan aksi atau keluar aksi
 }
 void viewTotalTransaction(const string username) {
   // ambil data dari tiket.csv dan filter lalu cari sesuai flightsID

@@ -1,9 +1,14 @@
 #include "../header/admin.h"
 #include "../header/fileHandler.h"
+#include "../header/ticket.h"
 #include <iostream>
 #include <vector>
 
 using namespace std;
+
+void adminMenu(const string username) {
+  // tampilan menu dan pilihan aksi admin
+}
 
 void viewListAccount(const vector<User> &user) {
   // melihat semua list akun pada vector

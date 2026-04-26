@@ -15,7 +15,7 @@ void paymentTicket(string ticketID, vector<Ticket> &ticket) {
   //  pada nomor ticket yang telah di bayar
   // ubah status menjadi paid
 }
-void cancelTicket(vector<Ticket> &ticket, vector<Flight> &flights,
+bool cancelTicket(vector<Ticket> &ticket, vector<Flight> &flights,
                   string ticketID) {
   // ubah status ticket menjadi canceled jika belum di bayar
   // jika sudah di bayar maka tidak bisa di lakukan canceled
