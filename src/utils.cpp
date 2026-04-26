@@ -8,4 +8,5 @@ void clearScreen() {
 }
 string generateId(vector<Flight> &flights) {
   // generate id flight berdasarkan flight id terakhir
+  return "0";
 }

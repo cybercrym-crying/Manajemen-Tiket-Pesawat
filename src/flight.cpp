@@ -16,12 +16,15 @@ void searchFlight(const vector<Flight> &flights, string destination) {
 bool addFlightData(vector<Flight> &flights, Flight &dataFlights) {
   // generate ID flights
   // jika semua sesaui dan lancar return true, jika tidak return false
+  return true;
 }
 bool deleteFlightData(vector<Flight> &flights, string &idFlights) {
   // lakukan penghapusan sesuai dengan id yang diterima pada vector
   // jika tidak ada return false, jika ada return true
+  return true;
 }
 bool editFlightData(vector<Flight> &flights, Flight &dataFlights) {
   // lakukan timpa vector sesuai dengan id pada dataFlights
   // jika tidak ada return false, jika ada return true
+  return true;
 }

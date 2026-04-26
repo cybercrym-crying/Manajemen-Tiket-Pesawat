@@ -5,7 +5,8 @@ using namespace std;
 
 void loadFile(vector<User> &user, vector<Ticket> &ticket,
               vector<Flight> &flights) {
-  // memasukan semua data csv masing masing pada vector nya
+  // cek terlebih dahulu bahwa data tersedia
+  //  memasukan semua data csv masing masing pada vector nya
 }
 void addUserFile(vector<User> &user) {
   // tambahkan user baru dengan menimpan file csv dengan vector modifikasi
