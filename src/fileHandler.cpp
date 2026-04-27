@@ -8,12 +8,12 @@ void loadFile(vector<User> &user, vector<Ticket> &ticket,
   // cek terlebih dahulu bahwa data tersedia
   //  memasukan semua data csv masing masing pada vector nya
 }
-void addUserFile(vector<User> &user) {
-  // tambahkan user baru dengan menimpan file csv dengan vector modifikasi
+void saveUserFile(vector<User> &user) {
+  // menyimpan data vector User saat ini ke dalam account.csv
 }
-void removeUserFile(vector<User> &user) {
-  // hapus user yang dipilih dengan menimpa file csv dengan vector modifikasi
+void saveFlightFile(vector<Flight> &flight) {
+  // menyimpan data vector flight saat ini ke dalam flight.csv
 }
-void updateUserFile(vector<User> &user) {
-  // update data user yang dipilih pada file dengan vector modifikasi
+void saveTicketFile(vector<Ticket> &ticket) {
+  // meyimpan data vector ticket saat ini ke dalam ticket.csv
 }
