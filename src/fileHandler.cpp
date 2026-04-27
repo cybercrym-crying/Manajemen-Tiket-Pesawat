@@ -1,13 +1,11 @@
 #include "../header/fileHandler.h"
+#include <algorithm>
 #include <iostream>
 #include <vector>
 using namespace std;
 
 void loadFile(vector<User> &user, vector<Ticket> &ticket,
-              vector<Flight> &flights) {
-  // cek terlebih dahulu bahwa data tersedia
-  //  memasukan semua data csv masing masing pada vector nya
-}
+              vector<Flight> &flights) {}
 void saveUserFile(vector<User> &user) {
   // menyimpan data vector User saat ini ke dalam account.csv
 }
