@@ -21,7 +21,7 @@ void mainMenu(vector<User> &user) {
       User *userLogged = loginAccount(user);
       if (userLogged) {
         if (userLogged->role == ADMIN)
-          adminMenu(userLogged->username);
+          adminMenu(userLogged->username, user);
         if (userLogged->role == CUSTOMER)
           customerMenu(userLogged->username);
         if (userLogged->role == AIRLINE)
