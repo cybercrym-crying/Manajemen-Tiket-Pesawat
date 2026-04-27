@@ -3,12 +3,14 @@
 #include "../header/fileHandler.h"
 #include "../header/flight.h"
 #include "../header/ticket.h"
+#include "../header/types.h"
 #include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
 
-void customerMenu(const string username) {
+void customerMenu(const string username, vector<User> &user,
+                  vector<Flight> &flights, vector<Ticket> &ticket) {
   // menu customer
 }
 

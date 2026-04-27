@@ -1,12 +1,14 @@
 #include "../header/admin.h"
 #include "../header/fileHandler.h"
 #include "../header/ticket.h"
+#include "../header/types.h"
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
-void adminMenu(const string username) {
+void adminMenu(const string username, vector<User> &user,
+               vector<Flight> &flights, vector<Ticket> &ticket) {
   // tampilan menu dan pilihan aksi admin
 }
 
@@ -22,7 +24,7 @@ void banUserAccount(vector<User> &user) {
   // melakukan perubahan status active akun user tertentu
   // perbarui pada file csv dengan fungsi filehandler
 }
-void eraseUserAccount(vector<User> &user) {
+void removeUserAccount(vector<User> &user) {
   // menhapus akun user
   //  perbarui pada file csv dengan fungsi filehandler
 }
