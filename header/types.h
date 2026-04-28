@@ -9,8 +9,8 @@ struct User {
   string password;
   bool isActive;
   Role role;
-  User(string u, string p)
-      : username(u), password(p), isActive(true), role(CUSTOMER) {}
+  User(string u, string p, bool i, Role r)
+      : username(u), password(p), isActive(i), role(r) {}
 };
 
 struct Flight {

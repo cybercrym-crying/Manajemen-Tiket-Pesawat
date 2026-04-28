@@ -1,7 +1,6 @@
-flightID,airlineName,destination,time,price,capacity
-FL001,Garuda Indonesia,Samarinda,10:00,1200000,150
-FL002,Air Asia,Jakarta,12:30,850000,180
-FL003,Lion Air,Surabaya,14:15,750000,210
-FL004,Citilink,Denpasar,08:45,950000,180
-FL005,Batik Air,Yogyakarta,16:00,1100000,160
-
+flightID,airlineName,destination,dateTime,price,capacity
+FL001,Garuda Indonesia,Samarinda,2026-09-10 10:00,1200000,150
+FL002,Air Asia,Jakarta,2026-03-13 12:30,850000,180
+FL003,Lion Air,Surabaya,2026-04-09 14:15,750000,210
+FL004,Citilink,Denpasar,2026-07-13 08:45,950000,180
+FL005,Batik Air,Yogyakarta,2026-01-13 16:00,1100000,160

@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
-void loadFile(vector<User> &user, vector<Ticket> &ticket,
-              vector<Flight> &flights);
+int loadFile(vector<User> &user, vector<Ticket> &ticket,
+             vector<Flight> &flights);
 
 void saveUserFile(vector<User> &user);
 void saveFlightFile(vector<Flight> &flight);

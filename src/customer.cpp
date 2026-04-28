@@ -11,7 +11,8 @@ using namespace std;
 
 void customerMenu(const string username, vector<User> &user,
                   vector<Flight> &flights, vector<Ticket> &ticket) {
-  // menu customer
+
+  std::cout << "Berhasil";
 }
 
 void bookingTicket(const string username) {

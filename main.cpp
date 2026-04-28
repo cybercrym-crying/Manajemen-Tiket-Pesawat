@@ -9,7 +9,8 @@
 #include <vector>
 using namespace std;
 
-void mainMenu(vector<User> &user) {
+void mainMenu(vector<User> &user, vector<Flight> &flights,
+              vector<Ticket> &ticket) {
   string input;
   while (true) {
     cout << "1. Login\n";
@@ -21,11 +22,11 @@ void mainMenu(vector<User> &user) {
       User *userLogged = loginAccount(user);
       if (userLogged) {
         if (userLogged->role == ADMIN)
-          adminMenu(userLogged->username, user);
+          adminMenu(userLogged->username, user, flights, ticket);
         if (userLogged->role == CUSTOMER)
-          customerMenu(userLogged->username);
+          customerMenu(userLogged->username, user, flights, ticket);
         if (userLogged->role == AIRLINE)
-          airlineMenu(userLogged->username);
+          airlineMenu(userLogged->username, user, flights, ticket);
       }
     } else if (input == "2") {
       registerAccount(user);
@@ -39,6 +40,11 @@ int main() {
   vector<User> user;
   vector<Flight> flights;
   vector<Ticket> ticket;
-  mainMenu(user);
+  int file = loadFile(user, ticket, flights);
+  if (file == -1) {
+    cout << "Failed To Load database\n";
+    return -1;
+  }
+  mainMenu(user, flights, ticket);
   return 0;
 }
