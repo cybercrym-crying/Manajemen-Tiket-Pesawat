@@ -1,6 +1,7 @@
-ticketID,customerUsername,flightID,seat,status
-TIX001,akbar_rachim,FL001,12A,Paid
-TIX002,akbar_rachim,FL003,05C,Pending
-TIX003,pirlo_syabila,FL001,12B,Paid
-TIX004,budi_santoso,FL005,01A,Paid
-TIX005,siti_aminah,FL002,15F,Canceled
+ticketID,flightID,customerName,bookingStatus,seatNumber,dateTime
+TIX001,FL001,Akbar Rachim,Pending,12A,2026-12-01 12:2026
+TIX002,FL002,Rachim,Canceled,12A,2026-12-01 12:2026
+TIX003,FL002,Fendy Shayrul,Pending,12A,2026-12-01 12:2026
+TIX004,FL003,Kevin,Pending,12A,2026-12-01 12:2026
+TIX005,FL004,Adi,Pending,12A,2026-12-01 12:2026
+TIX006,FL004,Suandi,Pending,12A,2026-12-01 12:2026

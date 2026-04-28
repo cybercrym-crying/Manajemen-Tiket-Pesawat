@@ -13,6 +13,8 @@ User *loginAccount(vector<User> &user) {
   getline(cin, name);
   cout << "Input Pass : ";
   getline(cin, pass);
+  sort(user.begin(), user.end(),
+       [](const User &a, const User &b) { return a.username < b.username; });
   auto pos = lower_bound(
       user.begin(), user.end(), name,
       [](const User &a, string username) { return a.username < username; });
@@ -27,24 +29,26 @@ User *loginAccount(vector<User> &user) {
     return nullptr;
   }
 }
+
 void registerAccount(vector<User> &user) {
   string name, pass, salt = "s$ltsh4#@";
-  bool inUse;
   cin.ignore(1000, '\n');
   cout << "Input Name : ";
   getline(cin, name);
   cout << "Input Pass : ";
   getline(cin, pass);
-  inUse = binary_search(
+  sort(user.begin(), user.end(),
+       [](const User &a, const User &b) { return a.username < b.username; });
+  auto it = lower_bound(
       user.begin(), user.end(), name,
       [](const User &a, const string &b) { return a.username < b; });
 
-  if (inUse) {
+  if (it != user.end() && it->username == name) {
     cout << "Username Already User By Another User\n";
     return;
   } else {
     pass = picosha2::hash256_hex_string(pass + salt);
-    user.push_back({name, pass});
+    user.emplace_back(name, pass, true, CUSTOMER);
     saveUserFile(user);
     cout << "Registration Succes\n";
     sort(user.begin(), user.end(),
