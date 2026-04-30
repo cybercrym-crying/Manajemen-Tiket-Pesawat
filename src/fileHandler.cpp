@@ -1,5 +1,6 @@
 #include "../header/fileHandler.h"
 #include "../header/types.h"
+#include "../header/utils.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -82,14 +83,8 @@ void saveUserFile(vector<User> &user) {
   else {
     userFile << "username" << ',' << "password" << ',' << "isActive" << ','
              << "role\n";
-    for (const auto &dataUser : user) {
-      if (dataUser.role == ADMIN) {
-        role = "ADMIN";
-      } else if (dataUser.role == AIRLINE) {
-        role = "AIRLINE";
-      } else {
-        role = "CUSTOMER";
-      }
+    for (auto &dataUser : user) {
+      role = toStringRole(dataUser.role);
       userFile << dataUser.username << ',' << dataUser.password << ','
                << (dataUser.isActive ? "true" : "false") << ',' << (role)
                << '\n';
@@ -97,6 +92,7 @@ void saveUserFile(vector<User> &user) {
     userFile.close();
   }
 }
+
 void saveFlightFile(vector<Flight> &flight) {
   ofstream flightFile("data/flight.csv");
   if (!(flightFile.is_open()))
@@ -111,6 +107,7 @@ void saveFlightFile(vector<Flight> &flight) {
     flightFile.close();
   }
 }
+
 void saveTicketFile(vector<Ticket> &ticket) {
   ofstream ticketFile("data/ticket.csv");
   if (!(ticketFile.is_open()))

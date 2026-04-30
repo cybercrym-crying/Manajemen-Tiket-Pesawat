@@ -2,6 +2,7 @@
 #include "../header/fileHandler.h"
 #include "../header/picosha2.h"
 #include "../header/types.h"
+#include "../header/utils.h"
 #include <algorithm>
 #include <iostream>
 #include <vector>
@@ -19,6 +20,10 @@ User *loginAccount(vector<User> &user) {
       user.begin(), user.end(), name,
       [](const User &a, string username) { return a.username < username; });
   if (pos != user.end() && pos->username == name) {
+    if (pos->isActive == false) {
+      cout << "This Account Not Active\n";
+      return nullptr;
+    }
     checkHash = picosha2::hash256_hex_string(pass + salt);
     if (!(pos->password == checkHash)) {
       return nullptr;
@@ -46,7 +51,14 @@ void registerAccount(vector<User> &user) {
   if (it != user.end() && it->username == name) {
     cout << "Username Already User By Another User\n";
     return;
-  } else {
+  }
+  if (haveSymbol(name)) {
+    cout << "Name Cannot Contain Symbol\n";
+    cout << "Failed To Add Account\n";
+    return;
+  }
+
+  else {
     pass = picosha2::hash256_hex_string(pass + salt);
     user.emplace_back(name, pass, true, CUSTOMER);
     saveUserFile(user);
