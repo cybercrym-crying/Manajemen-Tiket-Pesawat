@@ -16,16 +16,14 @@ void airlineMenu(const string username, vector<User> &user,
   std::cout << "2. Penerbangan Baru" << std::endl;
   std::cout << "3. delete" << std::endl;
   std::cout << "4. View Flight" << std::endl;
-
 }
 
-  // ambil data dari tiket.csv dan filter lalu cari sesuai flightsID
-  // cek apakah airlane name sesuai dengan username
+// ambil data dari tiket.csv dan filter lalu cari sesuai flightsID
+// cek apakah airlane name sesuai dengan username
 void viewTotalTransaction(const string username) {
   fstream fin;
 
-  fin.open(data/ticket.csv, ios::in);
-
+  fin.open("data/ticket.csv", ios::in);
 }
 
 void createFlight(const string username, vector<Flight> &flights) {
