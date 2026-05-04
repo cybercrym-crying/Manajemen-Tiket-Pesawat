@@ -10,8 +10,7 @@ struct User {
   string password;
   bool isActive;
   Role role;
-
-  // User() {}
+  User() {}
   User(string u, string p, bool i, Role r)
       : username(u), password(p), isActive(i), role(r) {}
 };
@@ -19,15 +18,15 @@ struct User {
 struct Flight {
   string flightID;
   string airlineName;
+  string origin;
   string destination;
   string time;
   int price;
   int capacity;
-
-  // Flight() {} // saran ku tambahin aja, biar file csv bisa ngisi
-  Flight(string f, string a, string d, string t, int p, int c)
-      : flightID(f), airlineName(a), destination(d), time(t), price(p),
-        capacity(c) {}
+  Flight() {} // saran ku tambahin aja, biar file csv bisa ngisi
+  Flight(string f, string a, string o, string d, string t, int p, int c)
+      : flightID(f), airlineName(a), origin(o), destination(d), time(t),
+        price(p), capacity(c) {}
 };
 
 struct Ticket {
@@ -37,7 +36,6 @@ struct Ticket {
   string bookingStatus;
   string seatNumber;
   string date;
-
   Ticket() {} // -> default constructor
   Ticket(string t, string f, string c, string b, string s, string d)
       : ticketID(t), flightID(f), customerName(c), bookingStatus(b),
