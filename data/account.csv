@@ -1,3 +1,4 @@
 username,password,isActive,role
 Rachim Akbar,8d95e45ce01a698a09dea57a1250e810b7fb83f80c2b0f9eea808e80971a66c6,true,ADMIN
 Rachimm,8d95e45ce01a698a09dea57a1250e810b7fb83f80c2b0f9eea808e80971a66c6,false,CUSTOMER
+Akbar,8d95e45ce01a698a09dea57a1250e810b7fb83f80c2b0f9eea808e80971a66c6,true,CUSTOMER

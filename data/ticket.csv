@@ -1,7 +1,5 @@
-ticketID,flightID,customerName,bookingStatus,seatNumber,dateTime
-TIX1,FL001,Akbar Rachim,Pending,12A,2026-12-01 12:2026
-TIX2,FL002,Rachim,Canceled,12A,2026-12-01 12:2026
-TIX3,FL002,Fendy Shayrul,Pending,12A,2026-12-01 12:2026
-TIX4,FL003,Kevin,Pending,12A,2026-12-01 12:2026
-TIX5,FL004,Adi,Pending,12A,2026-12-01 12:2026
-TIX6,FL004,Suandi,Pending,12A,2026-12-01 12:2026
+ticketId,flightId,customerName,bookingStatus,seatNumber,pendingLimit
+TIX1,FL1,Akbar,Paid,A150,2026-05-05 14:35
+TIX2,FL4,Akbar,Paid,A180,2026-05-05 14:35
+TIX3,FL6,Akbar,Canceled,A160,2026-05-05 14:40
+TIX4,FL1,Akbar,Canceled,A149,2026-05-05 14:42

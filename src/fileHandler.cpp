@@ -116,8 +116,8 @@ void saveTicketFile(vector<Ticket> &ticket) {
     return;
 
   else {
-    ticketFile
-        << "ticketId,flightId,customerName,bookingStatus,seatNumber,datetime\n";
+    ticketFile << "ticketId,flightId,customerName,bookingStatus,seatNumber,"
+                  "pendingLimit\n";
     for (const auto &dataTicket : ticket) {
       ticketFile << dataTicket.ticketID << ',' << dataTicket.flightID << ','
                  << dataTicket.customerName << ',' << dataTicket.bookingStatus

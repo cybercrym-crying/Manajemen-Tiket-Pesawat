@@ -1,5 +1,6 @@
-#include "../header/constants.h"
+#include "../header/fileHandler.h"
 #include "../header/types.h"
+#include <algorithm>
 #include <chrono>
 #include <ctime>
 #include <iomanip>
@@ -8,14 +9,57 @@
 #include <string>
 #include <vector>
 using namespace std;
+using namespace chrono;
 void clearScreen() {
   // fungsi clearsecreen sesuaikan dengan  OS
 }
+
+void refreshPendingTicket(vector<Ticket> &ticket, vector<Flight> &flights) {
+  string statusP = "Pending";
+  auto timeNow = chrono::system_clock::now();
+  time_t t = chrono::system_clock::to_time_t(timeNow);
+  ostringstream oss;
+  oss << put_time(localtime(&t), "%Y-%m-%d %H:%M");
+  string timeZone = oss.str();
+  sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
+    return a.bookingStatus < b.bookingStatus;
+  });
+  auto pos = lower_bound(ticket.begin(), ticket.end(), statusP,
+                         [](const Ticket &status, const string &statusP) {
+                           return status.bookingStatus < statusP;
+                         });
+  while (pos != ticket.end() && pos->bookingStatus == statusP) {
+    if (pos->date < timeZone) {
+      auto posF = lower_bound(flights.begin(), flights.end(), pos->flightID,
+                              [](const Flight &id, const string &flightId) {
+                                return id.flightID < flightId;
+                              });
+      if (posF != flights.end() && pos->flightID == posF->flightID) {
+        (posF->capacity)++;
+        pos->bookingStatus = "Canceled";
+      }
+    }
+    pos++;
+  }
+  sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
+    return a.ticketID < b.ticketID;
+  });
+  saveFlightFile(flights);
+  saveTicketFile(ticket);
+}
+
 string generateId(vector<Flight> &flights) {
   if (flights.empty())
-    return "FL0";
+    return "FL1";
   else
     return "FL" + to_string(stoi(flights.back().flightID.substr(2)) + 1);
+}
+
+string generateIdTicket(vector<Ticket> &ticket) {
+  if (ticket.empty())
+    return "TIX1";
+  else
+    return "TIX" + to_string(stoi(ticket.back().ticketID.substr(3)) + 1);
 }
 
 string toStringRole(Role &role) {

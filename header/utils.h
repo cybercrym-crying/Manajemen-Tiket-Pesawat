@@ -5,8 +5,10 @@
 #include <vector>
 using namespace std;
 void clearScreen();
+void refreshPendingTicket(vector<Ticket> &ticket, vector<Flight> &flights);
 string generateId(vector<Flight> &flights);
-bool isValidDateTime(const string &dateTime);
+string generateIdTicket(vector<Ticket> &ticket);
 string toStringRole(Role &role);
 bool haveSymbol(string username);
 bool checkIsDigit(string &x);
+bool isValidDateTime(const string &dateTime);
