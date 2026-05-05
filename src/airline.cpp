@@ -3,7 +3,9 @@
 #include "../header/flight.h"
 #include "../header/types.h"
 #include <fstream>
+#include <ios>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -34,11 +36,9 @@ void viewTotalTransaction(const string username) {
 
   while(std::getline(fin, line)){
     std::stringstream ss(line);
-    std::string token;
     Ticket t;
 
-    std::getline(ss, token, ','); 
-    t.flightID = stoi(token);
+    std::getline(ss, t.ticketID);
     std::getline(ss, t.customerName, ',');
     std::getline(ss, t.flightID, ',');
     std::getline(ss, t.seatNumber, ',');
@@ -52,7 +52,7 @@ void viewTotalTransaction(const string username) {
       std::cout << "Flight ID : " << t.flightID << "\n";
       std::cout << "Name      : " << t.customerName << "\n";
       std::cout << "SeatNumber: " << t.seatNumber << "\n";
-      std::cout << "Date : " << t.date << "\n";
+      std::cout << "Date      : " << t.date << "\n";
 
     }
   }
@@ -61,11 +61,67 @@ void viewTotalTransaction(const string username) {
 
   
 }
-
+// lakun input  untuk menyimpan data di struct flight dan pastikan data sesuai
 void createFlight(const string username, vector<Flight> &flights) {
-  // lakun input  untuk menyimpan data di struct flight dan pastikan data sesuai
+  Flight f;
+  f.airlineName = username;
+
+  while(true){
+    cout << "ID: ";
+    getline(cin, f.flightID);
+    if (!f.flightID.empty())
+    break;
+  cout << "ID cannot be empty\n";
+  }
+
+  while(true){
+    cout << "New Destination: ";
+    getline(cin, f.destination);
+    if (!f.destination.empty())
+    break;
+  cout << "Destination Cannot be empty!\n";
+  }
+  
+  while(true){
+    cout << "Time: ";
+    getline(cin, f.time);
+    if (!f.destination.empty())
+    break;
+  cout << "Time also cannot be empty!\n";
+  }
+
+  while(true){
+    cout << "Price: ";
+    cin >> f.price;
+
+    if (!cin.fail() && f.price > 0){
+      cin.ignore();
+      break;
+    }
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << "Price must be a positive number!\n";
+  }
+
+  while(true){
+    cout << "Capacity :";
+    cin >> f.capacity;
+    if (!cin.fail() && f.capacity > 0){
+      cin.ignore();
+      break;
+    }
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << "Capacity must be a positive number!\n";
+  }
+
+  flights.push_back(f);
+  cout << "New Flights successfully added!\n";
+
 }
+
+// lakukan input untuk id dan cek apakah id merupakan milik username airline
+// saat ini jika sesuai kirim flight.cpp untuk di delete
 void deleteFlight(const string username, vector<Flight> &flights) {
-  // lakukan input untuk id dan cek apakah id merupakan milik username airline
-  // saat ini jika sesuai kirim flight.cpp untuk di delete
+  deleteFlightData(flights, username, AIRLINE);
 }

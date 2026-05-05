@@ -6,5 +6,7 @@ using namespace std;
 
 void viewFlight(const vector<Flight> &flights, string username, Role role);
 void addFlightData(vector<Flight> &flights, const string username);
-void deleteFlightData(vector<Flight> &flights, const string username);
-void editFlightData(vector<Flight> &flights, const string username);
+void deleteFlightData(vector<Flight> &flights, const string username, Role role);
+void editFlightData(vector<Flight> &flights, const string username, Role role);
+
+/*Kau lupa tambahin Role di bagian delete ama editflight*/
