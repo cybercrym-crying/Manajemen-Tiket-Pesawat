@@ -146,6 +146,7 @@ void addFlightData(vector<Flight> &flights, const string username) {
   flights.emplace_back(id, username, origin, dest, date_time, price, capacity);
   saveFlightFile(flights);
 }
+
 void deleteFlightData(vector<Flight> &flights, const string username,
                       Role role) {
 
@@ -176,7 +177,6 @@ void deleteFlightData(vector<Flight> &flights, const string username,
 }
 
 void editFlightData(vector<Flight> &flights, const string username, Role role) {
-
   string inputId;
   string ori, dest, price, capacity;
   char inputUser;
@@ -231,7 +231,7 @@ void editFlightData(vector<Flight> &flights, const string username, Role role) {
           }
           pos->capacity = stoi(capacity);
         } catch (const invalid_argument &e) {
-          cerr << "Capacity Must Be Integet Not Alfabet\n";
+          cerr << "Capacity Must Be Integer Not Alfabet\n";
         } catch (const out_of_range &e) {
           cerr << "Input To Large\n";
         } catch (const runtime_error &e) {

@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
@@ -27,6 +28,15 @@ struct Flight {
   Flight(string f, string a, string o, string d, string t, int p, int c)
       : flightID(f), airlineName(a), origin(o), destination(d), time(t),
         price(p), capacity(c) {}
+  void displayInfo() {
+    cout << "Flight Id : " << flightID << endl;
+    cout << "Airline Name : " << airlineName << endl;
+    cout << "Origin : " << origin << endl;
+    cout << "Destination : " << destination << endl;
+    cout << "Date Time : " << time << endl;
+    cout << "Price : " << price << endl;
+    cout << "Capacity : " << capacity << endl;
+  }
 };
 
 struct Ticket {

@@ -103,7 +103,6 @@ void banUserAccount(vector<User> &user) {
       [](const User &a, string username) { return a.username < username; });
   if (pos != user.end() && pos->username == username) {
     cout << "Account Found : " << pos->username << endl;
-
     cout << "1. Ban Acccount\n";
     cout << "2. Unban Account\n";
     cout << "3. Exit\n";
