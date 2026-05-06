@@ -17,12 +17,17 @@
 #include "header/customer.h"
 #include "header/fileHandler.h"
 #include "header/types.h"
+#include <clocale>
 #include <iostream>
+#include <locale>
 #include <vector>
 using namespace std;
-
+const string C = "LC_ALL=C";
 void mainMenu(vector<User> &user, vector<Flight> &flights,
               vector<Ticket> &ticket) {
+  putenv("LC_ALL=C");
+  setlocale(LC_ALL, "C");
+
   string input;
   while (true) {
     cout << "1. Login\n";

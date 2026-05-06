@@ -1,5 +1,5 @@
 flightId,airlineName,origin,destination,datetime,price,capacity
-FL1,Garuda Indonesia,Surabaya,Samarinda,2026-09-10 10:00,1200000,149
+FL1,Garuda Indonesia,Surabaya,Samarinda,2026-09-10 10:00,1200000,147
 FL2,Air Asia,Jakarta,Makassar,2026-03-13 12:30,850000,180
 FL3,Lion Air,Surabaya,Aceh,2026-04-09 14:15,750000,210
 FL4,Citilink,Denpasar,Samarinda,2026-07-13 08:45,950000,179
