@@ -1,7 +1,19 @@
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOGDI
+#define NOUSER
+#define NOMCX
+#define NOIME
+#define NOMINMAX
+// Override byte sebelum windows.h masuk
+#define byte win_byte
+#include <windows.h>
+#undef byte
+#endif
+
 #include "header/admin.h"
 #include "header/airline.h"
 #include "header/auth.h"
-#include "header/constants.h"
 #include "header/customer.h"
 #include "header/fileHandler.h"
 #include "header/types.h"
