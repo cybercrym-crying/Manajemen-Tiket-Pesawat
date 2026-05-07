@@ -2,126 +2,215 @@
 #include "../header/fileHandler.h"
 #include "../header/flight.h"
 #include "../header/types.h"
-#include <fstream>
-#include <ios>
+#include "../header/utils.h"
+#include <algorithm>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
 #include <iostream>
 #include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
+using namespace std;
 
-// using namespace std;
-
-
-// tampilan menu airline pilihan aksi atau keluar aksi
 void airlineMenu(const string username, vector<User> &user,
                  vector<Flight> &flights, vector<Ticket> &ticket) {
-  std::cout << "1. Transaction" << std::endl;
-  std::cout << "2. New Flight Schedule" << std::endl;
-  std::cout << "3. Remove Flight" << std::endl;
-  std::cout << "4. View Flight" << std::endl;
+  string inputUser;
+  while (true) {
+    cout << "1. View Transaction" << endl;
+    cout << "2. Add New Flight Schedule" << endl;
+    cout << "3. Remove Flight" << endl;
+    cout << "4. View Flight" << endl;
+    cout << "Input User : ";
+    cin >> inputUser;
+    if (inputUser == "1") {
+      viewTotalTransaction(flights, ticket, username);
+    } else if (inputUser == "2") {
+      addFlightData(flights, username);
+    } else if (inputUser == "3") {
+      deleteFlightData(flights, username, AIRLINE);
+    } else if (inputUser == "4") {
+      viewFlight(flights, username, AIRLINE);
+    } else if (inputUser == "5") {
+      return;
+    }
+  }
 }
 
-std::vector<Ticket> ticketlist;
+void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
+                          const string username) {
+  int sum = 0;
 
-// ambil data dari tiket.csv dan filter lalu cari sesuai flightsID
-// cek apakah airlane name sesuai dengan username
-void viewTotalTransaction(const string username) {
-  fstream fin;
+  sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
+    return a.airlineName < b.airlineName;
+  });
 
-  fin.open("data/ticket.csv", ios::in); //ambil data tiket
+  sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
+    return a.flightID < b.flightID;
+  });
 
-  string line;
-  getline(fin, line);
+  // Pakai lower_bound + upper_bound sebagai pengganti equal_range
+  auto startF = lower_bound(flights.begin(), flights.end(), username,
+                            [](const Flight &f, const string &uname) {
+                              return f.airlineName < uname;
+                            });
+  auto endF = upper_bound(flights.begin(), flights.end(), username,
+                          [](const string &uname, const Flight &f) {
+                            return uname < f.airlineName;
+                          });
 
-  while(std::getline(fin, line)){
-    std::stringstream ss(line);
-    Ticket t;
+  for (auto itF = startF; itF != endF; ++itF) {
 
-    std::getline(ss, t.ticketID);
-    std::getline(ss, t.customerName, ',');
-    std::getline(ss, t.flightID, ',');
-    std::getline(ss, t.seatNumber, ',');
-    std::getline(ss, t.date);
+    auto startT = lower_bound(
+        ticket.begin(), ticket.end(), itF->flightID,
+        [](const Ticket &t, const string &fId) { return t.flightID < fId; });
+    auto endT = upper_bound(
+        ticket.begin(), ticket.end(), itF->flightID,
+        [](const string &fId, const Ticket &t) { return fId < t.flightID; });
 
-    ticketlist.push_back(t);
-  }
-
-  for (auto& t : ticketlist) {
-    if (t.customerName == username){
-      std::cout << "Flight ID : " << t.flightID << "\n";
-      std::cout << "Name      : " << t.customerName << "\n";
-      std::cout << "SeatNumber: " << t.seatNumber << "\n";
-      std::cout << "Date      : " << t.date << "\n";
-
+    for (auto itT = startT; itT != endT; ++itT) {
+      sum += itF->price;
     }
   }
 
-  fin.close();
-
-  
+  cout << "Total Transaction : " << sum << endl;
 }
-// lakun input  untuk menyimpan data di struct flight dan pastikan data sesuai
-void createFlight(const string username, vector<Flight> &flights) {
-  Flight f;
-  f.airlineName = username;
-
-  while(true){
-    cout << "ID: ";
-    getline(cin, f.flightID);
-    if (!f.flightID.empty())
-    break;
-  cout << "ID cannot be empty\n";
+void addFlightData(vector<Flight> &flights, const string &username) {
+  string id = generateId(flights);
+  string origin, dest, date_time;
+  int price, capacity;
+  auto timeNow = chrono::system_clock::now();
+  time_t t = chrono::system_clock::to_time_t(timeNow);
+  ostringstream oss;
+  oss << put_time(localtime(&t), "%Y-%m-%d %H:%M");
+  string timeZoned = oss.str();
+  cin.ignore(1000, '\n');
+  cout << "Input Origin : ";
+  getline(cin, origin);
+  cout << "Input Destination : ";
+  getline(cin, dest);
+  cout << "Input Date Time (YYYY-MM-DD H:M): ";
+  getline(cin, date_time);
+  if (!(isValidDateTime(date_time))) {
+    cout << "Failed, Wrong Date Time Format, Example (2026-03-10 23:59)\n";
+    return;
   }
-
-  while(true){
-    cout << "New Destination: ";
-    getline(cin, f.destination);
-    if (!f.destination.empty())
-    break;
-  cout << "Destination Cannot be empty!\n";
-  }
-  
-  while(true){
-    cout << "Time: ";
-    getline(cin, f.time);
-    if (!f.destination.empty())
-    break;
-  cout << "Time also cannot be empty!\n";
-  }
-
-  while(true){
-    cout << "Price: ";
-    cin >> f.price;
-
-    if (!cin.fail() && f.price > 0){
-      cin.ignore();
-      break;
-    }
+  cout << "Input Price : ";
+  cin >> price;
+  if (cin.fail()) {
+    cout << "Failed, Price Must Integer\n";
     cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cout << "Price must be a positive number!\n";
+    return;
   }
-
-  while(true){
-    cout << "Capacity :";
-    cin >> f.capacity;
-    if (!cin.fail() && f.capacity > 0){
-      cin.ignore();
-      break;
-    }
+  cout << "Input Capacity : ";
+  cin >> capacity;
+  if (cin.fail()) {
+    cout << "Failed, Capacity Must Integer\n";
     cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cout << "Capacity must be a positive number!\n";
+    return;
   }
-
-  flights.push_back(f);
-  cout << "New Flights successfully added!\n";
-
+  flights.emplace_back(id, username, origin, dest, date_time, price, capacity);
+  saveFlightFile(flights);
 }
 
-// lakukan input untuk id dan cek apakah id merupakan milik username airline
-// saat ini jika sesuai kirim flight.cpp untuk di delete
-void deleteFlight(const string username, vector<Flight> &flights) {
-  deleteFlightData(flights, username, AIRLINE);
+void deleteFlightData(vector<Flight> &flights, const string &username,
+                      const Role &role) {
+
+  string inputId;
+  char inputUser;
+  if (role == AIRLINE) {
+    viewFlight(flights, username, role);
+    cout << "Input Flight Id : ";
+    cin >> inputId;
+    auto pos = lower_bound(
+        flights.begin(), flights.end(), inputId,
+        [](const Flight &id, string inputId) { return id.flightID < inputId; });
+    if (pos != flights.end() && pos->flightID == inputId &&
+        pos->airlineName == username) {
+      cout << "Flight Found : " << pos->flightID << " | " << pos->airlineName
+           << endl;
+      cout << "Delete (y/n): ";
+      cin >> inputUser;
+      if (inputUser == 'y' || inputUser == 'Y') {
+        flights.erase(pos);
+        saveFlightFile(flights);
+      } else {
+        cout << "Delete Flight Canceled\n";
+      }
+    } else
+      cout << "Flight Id Not Found\n";
+  }
+}
+
+void editFlightData(vector<Flight> &flights, const string &username,
+                    Role &role) {
+  string inputId;
+  string ori, dest, price, capacity;
+  char inputUser;
+  viewFlight(flights, username, role);
+  cout << "Input Flight Id : ";
+  cin >> inputId;
+  auto pos = lower_bound(
+      flights.begin(), flights.end(), inputId,
+      [](const Flight &id, string inputId) { return id.flightID < inputId; });
+  if (pos != flights.end() && pos->flightID == inputId &&
+      pos->airlineName == username) {
+    cout << "Flight Found : " << pos->flightID << " | " << pos->airlineName
+         << endl;
+    cout << "Edit? (y/n): ";
+    cin >> inputUser;
+    if (inputUser == 'y' || inputUser == 'Y') {
+      cin.ignore(1000, '\n');
+      cout << "Enter if you don't want to change!!";
+      cout << "Input Origin : ";
+      getline(cin, ori);
+      cout << "Input Destination : ";
+      getline(cin, dest);
+      cout << "Input Price : ";
+      getline(cin, price);
+      cout << "Input Capacity";
+      getline(cin, capacity);
+      if (!(ori.empty()) && checkIsDigit(ori) == false) {
+        pos->origin = ori;
+      }
+      if (!(dest.empty()) && checkIsDigit(dest) == false) {
+        pos->destination = dest;
+      }
+      if (!(price.empty())) {
+        try {
+          if (stoi(price) < 0) {
+            throw runtime_error("Mines Price Not Possible\n");
+          }
+          pos->price = stoi(price);
+        } catch (const invalid_argument &e) {
+          cerr << "Price Must Be Integet Not Alfabet\n";
+        } catch (const out_of_range &e) {
+          cerr << "Input To Large\n";
+        } catch (const runtime_error &e) {
+          cerr << e.what() << endl;
+        }
+      }
+
+      if (!(capacity.empty())) {
+        try {
+          if (stoi(capacity) < 0) {
+            throw runtime_error("Mines Seat Capacity Not Possible\n");
+          }
+          pos->capacity = stoi(capacity);
+        } catch (const invalid_argument &e) {
+          cerr << "Capacity Must Be Integer Not Alfabet\n";
+        } catch (const out_of_range &e) {
+          cerr << "Input To Large\n";
+        } catch (const runtime_error &e) {
+          cerr << e.what() << endl;
+        }
+      }
+
+      saveFlightFile(flights);
+    } else {
+      cout << "Edit Flight Canceled\n";
+    }
+  } else
+    cout << "Flight Id Not Found \n";
 }
