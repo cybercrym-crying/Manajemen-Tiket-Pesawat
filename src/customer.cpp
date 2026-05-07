@@ -21,7 +21,7 @@ using namespace chrono;
 void customerMenu(const string username, vector<User> &user,
                   vector<Flight> &flights, vector<Ticket> &ticket) {
   string inputUser;
-
+clearScreen();
   while (true) {
     refreshPendingTicket(ticket, flights);
     cout << "Selamat Datang " << username << endl;
@@ -34,7 +34,6 @@ void customerMenu(const string username, vector<User> &user,
     cin >> inputUser;
 
     if (inputUser == "1") {
-      viewFlight(flights, username, CUSTOMER);
       bookingTicket(flights, ticket, username, CUSTOMER);
     } else if (inputUser == "2") {
       payTicket(ticket, username);
@@ -50,6 +49,8 @@ void customerMenu(const string username, vector<User> &user,
 
 void bookingTicket(vector<Flight> &flights, vector<Ticket> &ticket,
                    const string username, Role role) {
+  clearScreen();
+  viewFlight(flights, username, CUSTOMER);
   string inputUser;
   auto timeNow = chrono::system_clock::now();
   time_t t = chrono::system_clock::to_time_t(timeNow + hours(1));
@@ -83,6 +84,7 @@ void bookingTicket(vector<Flight> &flights, vector<Ticket> &ticket,
 }
 
 void payTicket(vector<Ticket> &ticket, const string username) {
+  clearScreen();
   Table tableTicket;
   int i = 1;
   string inputUser;
@@ -123,6 +125,7 @@ void payTicket(vector<Ticket> &ticket, const string username) {
 
 void cancelTicket(vector<Flight> &flights, vector<Ticket> &ticket,
                   const string username) {
+  clearScreen();
   Table tableTicket;
   int i = 1;
   string inputUser;
