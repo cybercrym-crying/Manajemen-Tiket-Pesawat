@@ -7,7 +7,9 @@
 #include <iostream>
 #include <vector>
 using namespace std;
+
 User *loginAccount(vector<User> &user) {
+  clearScreen();
   string name, pass, salt = "s$ltsh4#@", checkHash;
   cin.ignore(1000, '\n');
   cout << "Input Name : ";

@@ -10,8 +10,15 @@
 #include <vector>
 using namespace std;
 using namespace chrono;
+
 void clearScreen() {
-  // fungsi clearsecreen sesuaikan dengan  OS
+  // apakah sistem operasi adalah Windows
+    #ifdef _WIN32
+        std::system("cls");
+    #else
+        // perintah clear untuk Linux dan macOS
+        std::system("clear");
+    #endif
 }
 
 void refreshPendingTicket(vector<Ticket> &ticket, vector<Flight> &flights) {

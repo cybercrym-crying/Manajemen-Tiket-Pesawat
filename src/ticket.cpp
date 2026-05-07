@@ -1,11 +1,14 @@
 #include "../header/ticket.h"
 #include "../header/tabulate.hpp"
+#include "../header/utils.h"
 #include <iostream>
 #include <vector>
 using namespace std;
 using namespace tabulate;
+
 void viewHistoryTicket(vector<Ticket> &ticket, const string username,
                        Role role) {
+  clearScreen();
   Table tableTicket;
   int i = 1;
   string inputUser;
@@ -26,7 +29,6 @@ void viewHistoryTicket(vector<Ticket> &ticket, const string username,
 
   else if (role == ADMIN) {
     for (auto &data : ticket) {
-
       tableTicket.add_row({to_string(i), data.ticketID, data.flightID,
                            data.customerName, data.bookingStatus,
                            data.seatNumber, data.date});

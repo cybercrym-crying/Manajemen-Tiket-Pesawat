@@ -22,6 +22,7 @@ void airlineMenu(const string username, vector<User> &user,
     cout << "2. Add New Flight Schedule" << endl;
     cout << "3. Remove Flight" << endl;
     cout << "4. View Flight" << endl;
+    cout << "5. Exit" << endl;
     cout << "Input User : ";
     cin >> inputUser;
     if (inputUser == "1") {
@@ -40,6 +41,7 @@ void airlineMenu(const string username, vector<User> &user,
 
 void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
                           const string username) {
+  clearScreen();
   int sum = 0;
 
   sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
@@ -77,6 +79,7 @@ void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
   cout << "Total Transaction : " << sum << endl;
 }
 void addFlightData(vector<Flight> &flights, const string &username) {
+  clearScreen();
   string id = generateId(flights);
   string origin, dest, date_time;
   int price, capacity;
@@ -117,6 +120,7 @@ void addFlightData(vector<Flight> &flights, const string &username) {
 void deleteFlightData(vector<Flight> &flights, const string &username,
                       const Role &role) {
 
+  clearScreen();
   string inputId;
   char inputUser;
   if (role == AIRLINE) {
@@ -145,6 +149,7 @@ void deleteFlightData(vector<Flight> &flights, const string &username,
 
 void editFlightData(vector<Flight> &flights, const string &username,
                     Role &role) {
+  clearScreen();
   string inputId;
   string ori, dest, price, capacity;
   char inputUser;
