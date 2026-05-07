@@ -18,13 +18,13 @@ using namespace tabulate;
 using namespace chrono_literals;
 using namespace chrono;
 
-void customerMenu(const string username, vector<User> &user,
-                  vector<Flight> &flights, vector<Ticket> &ticket) {
+void customerMenu(User &userlogged, vector<User> &user, vector<Flight> &flights,
+                  vector<Ticket> &ticket) {
   string inputUser;
-clearScreen();
+  clearScreen();
   while (true) {
     refreshPendingTicket(ticket, flights);
-    cout << "Selamat Datang " << username << endl;
+    cout << "Selamat Datang " << userlogged.username << endl;
     cout << "1. Booking Ticket\n";
     cout << "2. Paying Ticket\n";
     cout << "3. Cancel Ticket\n";
@@ -34,13 +34,13 @@ clearScreen();
     cin >> inputUser;
 
     if (inputUser == "1") {
-      bookingTicket(flights, ticket, username, CUSTOMER);
+      bookingTicket(flights, ticket, userlogged);
     } else if (inputUser == "2") {
-      payTicket(ticket, username);
+      payTicket(ticket, userlogged);
     } else if (inputUser == "3") {
-      cancelTicket(flights, ticket, username);
+      cancelTicket(flights, ticket, userlogged);
     } else if (inputUser == "4") {
-      viewHistoryTicket(ticket, username, CUSTOMER);
+      viewHistoryTicket(ticket, userlogged);
     } else if (inputUser == "5") {
       return;
     }
@@ -48,9 +48,9 @@ clearScreen();
 }
 
 void bookingTicket(vector<Flight> &flights, vector<Ticket> &ticket,
-                   const string username, Role role) {
+                   const User &userlogged) {
   clearScreen();
-  viewFlight(flights, username, CUSTOMER);
+  viewFlight(flights, userlogged);
   string inputUser;
   auto timeNow = chrono::system_clock::now();
   time_t t = chrono::system_clock::to_time_t(timeNow + hours(1));
@@ -70,9 +70,9 @@ void bookingTicket(vector<Flight> &flights, vector<Ticket> &ticket,
       cout << "Booking Ticket (y/n) : ";
       cin >> inputUser;
       if (inputUser == "Y" || inputUser == "y") {
-        ticket.emplace_back(generateIdTicket(ticket), pos->flightID, username,
-                            "Pending", "A" + to_string(pos->capacity),
-                            timeZoned);
+        ticket.emplace_back(generateIdTicket(ticket), pos->flightID,
+                            userlogged.userId, userlogged.username, "Pending",
+                            "A" + to_string(pos->capacity), timeZoned);
         (pos->capacity)--;
         saveTicketFile(ticket);
       } else
@@ -83,18 +83,19 @@ void bookingTicket(vector<Flight> &flights, vector<Ticket> &ticket,
   saveFlightFile(flights);
 }
 
-void payTicket(vector<Ticket> &ticket, const string username) {
+void payTicket(vector<Ticket> &ticket, const User &userlogged) {
   clearScreen();
   Table tableTicket;
   int i = 1;
   string inputUser;
-  tableTicket.add_row({"No", "Ticket Id", "Flight Id", "Username",
+  tableTicket.add_row({"No", "Ticket Id", "Flight Id", "User Id", "Username",
                        "Ticket Status", "Seat Number", "Pending Limit"});
   for (auto &data : ticket) {
-    if (data.customerName == username && data.bookingStatus == "Pending") {
+    if (data.customerName == userlogged.username &&
+        data.bookingStatus == "Pending") {
       tableTicket.add_row({to_string(i), data.ticketID, data.flightID,
-                           data.customerName, data.bookingStatus,
-                           data.seatNumber, data.date});
+                           data.userID, data.customerName, data.bookingStatus,
+                           data.seatNumber, data.bookingDate});
       i++;
     }
   }
@@ -124,7 +125,7 @@ void payTicket(vector<Ticket> &ticket, const string username) {
 }
 
 void cancelTicket(vector<Flight> &flights, vector<Ticket> &ticket,
-                  const string username) {
+                  const User &userlogged) {
   clearScreen();
   Table tableTicket;
   int i = 1;
@@ -133,10 +134,11 @@ void cancelTicket(vector<Flight> &flights, vector<Ticket> &ticket,
   tableTicket.add_row({"No", "Ticket Id", "Flight Id", "Username",
                        "Ticket Status", "Seat Number", "Pending Limit"});
   for (auto &data : ticket) {
-    if (data.customerName == username && data.bookingStatus == "Pending") {
+    if (data.customerName == userlogged.username &&
+        data.bookingStatus == "Pending") {
       tableTicket.add_row({to_string(i), data.ticketID, data.flightID,
                            data.customerName, data.bookingStatus,
-                           data.seatNumber, data.date});
+                           data.seatNumber, data.bookingDate});
       i++;
     }
   }

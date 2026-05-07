@@ -1,21 +1,18 @@
 #include "../header/flight.h"
-#include "../header/fileHandler.h"
 #include "../header/tabulate.hpp"
 #include "../header/types.h"
 #include "../header/utils.h"
-#include <algorithm>
 #include <chrono>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 #include <vector>
 using namespace std;
 using namespace tabulate;
 
-void viewFlight(const vector<Flight> &flights, string username, Role role) {
+void viewFlight(const vector<Flight> &flights, const User &userlogged) {
   clearScreen();
   Table tableData;
   int i = 1;
@@ -32,28 +29,28 @@ void viewFlight(const vector<Flight> &flights, string username, Role role) {
   tableData.add_row({"No", "Flight Id", "Airline Name", "Origin", "Destination",
                      "Date Time", "Price", "Capacity"});
   if (inputUser == "1") {
-    if (role == ADMIN) {
+    if (userlogged.role == ADMIN) {
       for (auto &data : flights) {
-        tableData.add_row({to_string(i), data.flightID, data.airlineName,
-                           data.origin, data.destination, data.time,
+        tableData.add_row({to_string(i), data.flightID, data.airlineUserID,
+                           data.origin, data.destination, data.departureTime,
                            to_string(data.price), to_string(data.capacity)});
         i++;
       }
 
-    } else if (role == AIRLINE) {
+    } else if (userlogged.role == AIRLINE) {
       for (auto &data : flights) {
-        if (data.airlineName == username) {
-          tableData.add_row({to_string(i), data.flightID, data.airlineName,
-                             data.origin, data.destination, data.time,
+        if (data.airlineUserID == userlogged.userId) {
+          tableData.add_row({to_string(i), data.flightID, data.airlineUserID,
+                             data.origin, data.destination, data.departureTime,
                              to_string(data.price), to_string(data.capacity)});
           i++;
         }
       }
     } else {
       for (auto &data : flights) {
-        if (data.time > timeZoned) {
-          tableData.add_row({to_string(i), data.flightID, data.airlineName,
-                             data.origin, data.destination, data.time,
+        if (data.departureTime > timeZoned) {
+          tableData.add_row({to_string(i), data.flightID, data.airlineUserID,
+                             data.origin, data.destination, data.departureTime,
                              to_string(data.price), to_string(data.capacity)});
           i++;
         }
@@ -67,23 +64,23 @@ void viewFlight(const vector<Flight> &flights, string username, Role role) {
     cout << "Input Destination : \n";
     cin >> inputDest;
 
-    if (role == ADMIN) {
+    if (userlogged.role == ADMIN) {
       for (auto &data : flights) {
         if (inputDest == data.destination && data.origin == inputOri) {
-          tableData.add_row({to_string(i), data.flightID, data.airlineName,
-                             data.origin, data.destination, data.time,
+          tableData.add_row({to_string(i), data.flightID, data.airlineUserID,
+                             data.origin, data.destination, data.departureTime,
                              to_string(data.price), to_string(data.capacity)});
           i++;
         }
       }
     }
 
-    else if (role == AIRLINE) {
+    else if (userlogged.role == AIRLINE) {
       for (auto &data : flights) {
-        if (data.airlineName == username && data.origin == inputOri &&
-            data.destination == inputDest) {
-          tableData.add_row({to_string(i), data.flightID, data.airlineName,
-                             data.origin, data.destination, data.time,
+        if (data.airlineUserID == userlogged.userId &&
+            data.origin == inputOri && data.destination == inputDest) {
+          tableData.add_row({to_string(i), data.flightID, data.airlineUserID,
+                             data.origin, data.destination, data.departureTime,
                              to_string(data.price), to_string(data.capacity)});
           i++;
         }
@@ -93,10 +90,10 @@ void viewFlight(const vector<Flight> &flights, string username, Role role) {
     else {
 
       for (auto &data : flights) {
-        if (data.time > timeZoned && data.destination == inputDest &&
+        if (data.departureTime > timeZoned && data.destination == inputDest &&
             data.origin == inputOri) {
-          tableData.add_row({to_string(i), data.flightID, data.airlineName,
-                             data.origin, data.destination, data.time,
+          tableData.add_row({to_string(i), data.flightID, data.airlineUserID,
+                             data.origin, data.destination, data.departureTime,
                              to_string(data.price), to_string(data.capacity)});
           i++;
         }

@@ -13,12 +13,12 @@ using namespace chrono;
 
 void clearScreen() {
   // apakah sistem operasi adalah Windows
-    #ifdef _WIN32
-        std::system("cls");
-    #else
-        // perintah clear untuk Linux dan macOS
-        std::system("clear");
-    #endif
+#ifdef _WIN32
+  std::system("cls");
+#else
+  // perintah clear untuk Linux dan macOS
+  std::system("clear");
+#endif
 }
 
 void refreshPendingTicket(vector<Ticket> &ticket, vector<Flight> &flights) {
@@ -36,7 +36,7 @@ void refreshPendingTicket(vector<Ticket> &ticket, vector<Flight> &flights) {
                            return status.bookingStatus < statusP;
                          });
   while (pos != ticket.end() && pos->bookingStatus == statusP) {
-    if (pos->date < timeZone) {
+    if (pos->bookingDate < timeZone) {
       auto posF = lower_bound(flights.begin(), flights.end(), pos->flightID,
                               [](const Flight &id, const string &flightId) {
                                 return id.flightID < flightId;
@@ -69,6 +69,12 @@ string generateIdTicket(vector<Ticket> &ticket) {
     return "TIX" + to_string(stoi(ticket.back().ticketID.substr(3)) + 1);
 }
 
+string generateIdUser(vector<User> &user) {
+  if (user.empty())
+    return "US1";
+  else
+    return "US" + to_string(stoi(user.back().userId.substr(2)) + 1);
+}
 string toStringRole(Role &role) {
   if (role == ADMIN) {
     return "ADMIN";

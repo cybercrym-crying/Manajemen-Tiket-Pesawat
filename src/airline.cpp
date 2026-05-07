@@ -8,13 +8,12 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
-#include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
 using namespace std;
 
-void airlineMenu(const string username, vector<User> &user,
+void airlineMenu(const User &userlogged, vector<User> &user,
                  vector<Flight> &flights, vector<Ticket> &ticket) {
   string inputUser;
   while (true) {
@@ -26,13 +25,13 @@ void airlineMenu(const string username, vector<User> &user,
     cout << "Input User : ";
     cin >> inputUser;
     if (inputUser == "1") {
-      viewTotalTransaction(flights, ticket, username);
+      viewTotalTransaction(flights, ticket, userlogged);
     } else if (inputUser == "2") {
-      addFlightData(flights, username);
+      addFlightData(flights, userlogged);
     } else if (inputUser == "3") {
-      deleteFlightData(flights, username, AIRLINE);
+      deleteFlightData(flights, userlogged);
     } else if (inputUser == "4") {
-      viewFlight(flights, username, AIRLINE);
+      viewFlight(flights, userlogged);
     } else if (inputUser == "5") {
       return;
     }
@@ -40,12 +39,12 @@ void airlineMenu(const string username, vector<User> &user,
 }
 
 void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
-                          const string username) {
+                          const User &userlogged) {
   clearScreen();
   int sum = 0;
 
   sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
-    return a.airlineName < b.airlineName;
+    return a.airlineUserID < b.airlineUserID;
   });
 
   sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
@@ -53,14 +52,12 @@ void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
   });
 
   // Pakai lower_bound + upper_bound sebagai pengganti equal_range
-  auto startF = lower_bound(flights.begin(), flights.end(), username,
-                            [](const Flight &f, const string &uname) {
-                              return f.airlineName < uname;
-                            });
-  auto endF = upper_bound(flights.begin(), flights.end(), username,
-                          [](const string &uname, const Flight &f) {
-                            return uname < f.airlineName;
-                          });
+  auto startF = lower_bound(
+      flights.begin(), flights.end(), userlogged.userId,
+      [](const Flight &f, const string &id) { return f.airlineUserID < id; });
+  auto endF = upper_bound(
+      flights.begin(), flights.end(), userlogged.userId,
+      [](const string &id, const Flight &f) { return id < f.airlineUserID; });
 
   for (auto itF = startF; itF != endF; ++itF) {
 
@@ -78,7 +75,7 @@ void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
 
   cout << "Total Transaction : " << sum << endl;
 }
-void addFlightData(vector<Flight> &flights, const string &username) {
+void addFlightData(vector<Flight> &flights, const User &userlogged) {
   clearScreen();
   string id = generateId(flights);
   string origin, dest, date_time;
@@ -113,26 +110,26 @@ void addFlightData(vector<Flight> &flights, const string &username) {
     cin.clear();
     return;
   }
-  flights.emplace_back(id, username, origin, dest, date_time, price, capacity);
+  flights.emplace_back(id, userlogged.userId, origin, dest, date_time, price,
+                       capacity);
   saveFlightFile(flights);
 }
 
-void deleteFlightData(vector<Flight> &flights, const string &username,
-                      const Role &role) {
+void deleteFlightData(vector<Flight> &flights, const User &userlogged) {
 
   clearScreen();
   string inputId;
   char inputUser;
-  if (role == AIRLINE) {
-    viewFlight(flights, username, role);
+  if (userlogged.role == AIRLINE) {
+    viewFlight(flights, userlogged);
     cout << "Input Flight Id : ";
     cin >> inputId;
     auto pos = lower_bound(
         flights.begin(), flights.end(), inputId,
         [](const Flight &id, string inputId) { return id.flightID < inputId; });
     if (pos != flights.end() && pos->flightID == inputId &&
-        pos->airlineName == username) {
-      cout << "Flight Found : " << pos->flightID << " | " << pos->airlineName
+        pos->airlineUserID == userlogged.userId) {
+      cout << "Flight Found : " << pos->flightID << " | " << pos->airlineUserID
            << endl;
       cout << "Delete (y/n): ";
       cin >> inputUser;
@@ -147,21 +144,20 @@ void deleteFlightData(vector<Flight> &flights, const string &username,
   }
 }
 
-void editFlightData(vector<Flight> &flights, const string &username,
-                    Role &role) {
+void editFlightData(vector<Flight> &flights, const User &userlogged) {
   clearScreen();
   string inputId;
   string ori, dest, price, capacity;
   char inputUser;
-  viewFlight(flights, username, role);
+  viewFlight(flights, userlogged);
   cout << "Input Flight Id : ";
   cin >> inputId;
   auto pos = lower_bound(
       flights.begin(), flights.end(), inputId,
       [](const Flight &id, string inputId) { return id.flightID < inputId; });
   if (pos != flights.end() && pos->flightID == inputId &&
-      pos->airlineName == username) {
-    cout << "Flight Found : " << pos->flightID << " | " << pos->airlineName
+      pos->airlineUserID == userlogged.userId) {
+    cout << "Flight Found : " << pos->flightID << " | " << pos->airlineUserID
          << endl;
     cout << "Edit? (y/n): ";
     cin >> inputUser;
