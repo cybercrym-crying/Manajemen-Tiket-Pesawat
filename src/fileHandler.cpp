@@ -6,6 +6,7 @@
 #include <sstream>
 #include <vector>
 using namespace std;
+
 int loadFile(vector<User> &user, vector<Ticket> &ticket,
              vector<Flight> &flights) {
   ifstream accountFile("data/account.csv");

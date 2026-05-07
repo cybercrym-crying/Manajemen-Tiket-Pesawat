@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vector>
 using namespace std;
-using namespace std;
+
 void adminMenu(const string username, vector<User> &user,
                vector<Flight> &flights, vector<Ticket> &ticket) {
   sort(user.begin(), user.end(),
@@ -48,6 +48,7 @@ void adminMenu(const string username, vector<User> &user,
       viewFlight(flights, username, ADMIN);
       break;
     case 6:
+
       viewHistoryTicket(ticket, username, ADMIN);
       break;
     case 7:
@@ -59,6 +60,7 @@ void adminMenu(const string username, vector<User> &user,
 }
 
 void viewListAccount(const vector<User> &user) {
+  clearScreen();
   tabulate::Table tableAccount;
   tableAccount.add_row(
       {"No", "Username", "Password", "Account Status", "Role Account"});
@@ -74,6 +76,7 @@ void viewListAccount(const vector<User> &user) {
 }
 
 void addNewAccount(vector<User> &user) {
+  clearScreen();
   string username, password, salt = "s$ltsh4#@";
   ;
   cin.ignore(1000, '\n');
@@ -92,6 +95,7 @@ void addNewAccount(vector<User> &user) {
 }
 
 void banUserAccount(vector<User> &user) {
+  clearScreen();
   string username;
   char inputUser;
   viewListAccount(user);
@@ -140,6 +144,7 @@ void banUserAccount(vector<User> &user) {
 }
 
 void removeUserAccount(vector<User> &user) {
+  clearScreen();
   string username;
   char inputUser;
   viewListAccount(user);

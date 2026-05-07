@@ -16,6 +16,7 @@ using namespace std;
 using namespace tabulate;
 
 void viewFlight(const vector<Flight> &flights, string username, Role role) {
+  clearScreen();
   Table tableData;
   int i = 1;
   string inputDest, inputOri, inputUser;

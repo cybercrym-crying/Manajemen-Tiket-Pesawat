@@ -17,6 +17,7 @@
 #include "header/customer.h"
 #include "header/fileHandler.h"
 #include "header/types.h"
+#include "header/utils.h"
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -33,6 +34,7 @@ void mainMenu(vector<User> &user, vector<Flight> &flights,
   }
   string input;
   while (true) {
+    clearScreen();
     cout << "1. Login\n";
     cout << "2. Register\n";
     cout << "3. Exit\n";
