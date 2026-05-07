@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vector>
 using namespace std;
-using namespace std;
+
 void adminMenu(const string username, vector<User> &user,
                vector<Flight> &flights, vector<Ticket> &ticket) {
   sort(user.begin(), user.end(),
