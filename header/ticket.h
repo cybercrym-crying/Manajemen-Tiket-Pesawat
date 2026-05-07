@@ -4,5 +4,4 @@
 #include <vector>
 using namespace std;
 
-void viewHistoryTicket(vector<Ticket> &ticket, const string username,
-                       Role role);
+void viewHistoryTicket(vector<Ticket> &ticket, const User &userlogged);

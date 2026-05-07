@@ -1,9 +1,4 @@
-ticketId,flightId,customerName,bookingStatus,seatNumber,pendingLimit
-TIX1,FL1,Akbar,Paid,A150,2026-05-05 14:35
-TIX2,FL4,Akbar,Paid,A180,2026-05-05 14:35
-TIX3,FL6,Akbar,Canceled,A160,2026-05-05 14:40
-TIX4,FL1,Akbar,Canceled,A149,2026-05-05 14:42
-TIX5,FL1,Akbar,Pending,A149,2026-05-06 11:52
-TIX6,FL1,Akbar,Pending,A148,2026-05-06 11:54
-TIX7,FL8,Rachimm,Paid,A135,2026-05-07 12:43
-TIX8,FL7,Rachimm,Canceled,A180,2026-05-07 13:38
+ticketId,flightId,UserId,customerName,bookingStatus,seatNumber,pendingLimit
+TIX1,FL1,US2,Rachim,Paid,A100,2026-05-07 10:15
+TIX2,FL1,US2,Akbar,Paid,A99,2026-05-07 10:20
+TIX3,FL2,US2,Rachimm,Pending,A150,2026-05-07 21:58

@@ -3,12 +3,10 @@
 #include <string>
 #include <vector>
 using namespace std;
-void airlineMenu(const string username, vector<User> &user,
+void airlineMenu(const User &userlogged, vector<User> &user,
                  vector<Flight> &flights, vector<Ticket> &ticket);
 void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
-                          const string username);
-void addFlightData(vector<Flight> &flights, const string &username);
-void deleteFlightData(vector<Flight> &flights, const string &username,
-                      const Role &role);
-void editFlightData(vector<Flight> &flights, const string &username,
-                    Role &role);
+                          const User &userlogged);
+void addFlightData(vector<Flight> &flights, const User &userlogged);
+void deleteFlightData(vector<Flight> &flights, const User &userlogged);
+void editFlightData(vector<Flight> &flights, const User &userlogged);

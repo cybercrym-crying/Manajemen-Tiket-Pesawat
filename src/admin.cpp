@@ -11,14 +11,14 @@
 #include <vector>
 using namespace std;
 
-void adminMenu(const string username, vector<User> &user,
+void adminMenu(const User &userlogged, vector<User> &user,
                vector<Flight> &flights, vector<Ticket> &ticket) {
   sort(user.begin(), user.end(),
        [](const User &a, const User &b) { return a.username < b.username; });
   int inputUser;
   bool running = true;
   while (running) {
-    cout << "Greeting " << username << endl;
+    cout << "Greeting " << userlogged.username << endl;
     cout << "1. View List Account\n";
     cout << "2. Add New Account\n";
     cout << "3. Ban User Account \n";
@@ -45,11 +45,11 @@ void adminMenu(const string username, vector<User> &user,
       removeUserAccount(user);
       break;
     case 5:
-      viewFlight(flights, username, ADMIN);
+      viewFlight(flights, userlogged);
       break;
     case 6:
 
-      viewHistoryTicket(ticket, username, ADMIN);
+      viewHistoryTicket(ticket, userlogged);
       break;
     case 7:
       running = false;
@@ -62,12 +62,13 @@ void adminMenu(const string username, vector<User> &user,
 void viewListAccount(const vector<User> &user) {
   clearScreen();
   tabulate::Table tableAccount;
-  tableAccount.add_row(
-      {"No", "Username", "Password", "Account Status", "Role Account"});
+  tableAccount.add_row({"No", "User Id", "Username", "Password",
+                        "Account Status", "Role Account"});
   int i = 1;
   string role;
   for (auto data : user) {
-    tableAccount.add_row({to_string(i), data.username, data.password,
+    tableAccount.add_row({to_string(i), data.userId, data.username,
+                          data.password,
                           string(data.isActive ? "Active" : "Inactive"),
                           toStringRole(data.role)});
     i++;
@@ -89,24 +90,27 @@ void addNewAccount(vector<User> &user) {
   }
   cout << "Input Password : ";
   getline(cin, password);
-  user.emplace_back(username, picosha2::hash256_hex_string(password + salt),
-                    true, AIRLINE);
+  user.emplace_back(generateIdUser(user), username,
+                    picosha2::hash256_hex_string(password + salt), true,
+                    AIRLINE);
   saveUserFile(user);
 }
 
 void banUserAccount(vector<User> &user) {
   clearScreen();
-  string username;
+  string userId;
   char inputUser;
   viewListAccount(user);
   cin.ignore(1000, '\n');
-  cout << "Input Username : ";
-  getline(cin, username);
-  auto pos = lower_bound(
-      user.begin(), user.end(), username,
-      [](const User &a, string username) { return a.username < username; });
-  if (pos != user.end() && pos->username == username) {
-    cout << "Account Found : " << pos->username << endl;
+  cout << "Input User Id : ";
+  getline(cin, userId);
+  sort(user.begin(), user.end(),
+       [](const User &a, const User &b) { return a.userId < b.userId; });
+  auto pos =
+      lower_bound(user.begin(), user.end(), userId,
+                  [](const User &a, string Id) { return a.userId < Id; });
+  if (pos != user.end() && pos->username == userId) {
+    cout << "Account Found : " << pos->userId << " | " << pos->username << endl;
     cout << "1. Ban Acccount\n";
     cout << "2. Unban Account\n";
     cout << "3. Exit\n";
@@ -145,17 +149,17 @@ void banUserAccount(vector<User> &user) {
 
 void removeUserAccount(vector<User> &user) {
   clearScreen();
-  string username;
+  string userId;
   char inputUser;
   viewListAccount(user);
   cin.ignore(1000, '\n');
   cout << "Input Username : ";
-  getline(cin, username);
-  auto pos = lower_bound(
-      user.begin(), user.end(), username,
-      [](const User &a, string username) { return a.username < username; });
-  if (pos != user.end() && pos->username == username) {
-    cout << "Account Found : " << pos->username << endl;
+  getline(cin, userId);
+  auto pos =
+      lower_bound(user.begin(), user.end(), userId,
+                  [](const User &a, string id) { return a.userId < id; });
+  if (pos != user.end() && pos->username == userId) {
+    cout << "Account Found : " << pos->userId << " | " << pos->username << endl;
     cout << "Remove Account (y/n) ?\n";
     cin >> inputUser;
     if (inputUser == 'Y' || inputUser == 'y') {

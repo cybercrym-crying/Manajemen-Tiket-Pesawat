@@ -38,6 +38,7 @@ User *loginAccount(vector<User> &user) {
 }
 
 void registerAccount(vector<User> &user) {
+  clearScreen();
   string name, pass, salt = "s$ltsh4#@";
   cin.ignore(1000, '\n');
   cout << "Input Name : ";
@@ -62,7 +63,7 @@ void registerAccount(vector<User> &user) {
 
   else {
     pass = picosha2::hash256_hex_string(pass + salt);
-    user.emplace_back(name, pass, true, CUSTOMER);
+    user.emplace_back(generateIdUser(user), name, pass, true, CUSTOMER);
     saveUserFile(user);
     cout << "Registration Succes\n";
     sort(user.begin(), user.end(),
