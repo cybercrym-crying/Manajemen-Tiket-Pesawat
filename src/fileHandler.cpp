@@ -90,7 +90,7 @@ void saveUserFile(vector<User> &user) {
     userFile << "userId,username,password,isActive,role\n";
     for (auto &dataUser : user) {
       role = toStringRole(dataUser.role);
-      userFile << dataUser.userId << dataUser.username << ','
+      userFile << dataUser.userId << ',' << dataUser.username << ','
                << dataUser.password << ','
                << (dataUser.isActive ? "true" : "false") << ',' << (role)
                << '\n';
