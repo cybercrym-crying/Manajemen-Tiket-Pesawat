@@ -13,8 +13,7 @@ using namespace std;
 
 void adminMenu(const User &userlogged, vector<User> &user,
                vector<Flight> &flights, vector<Ticket> &ticket) {
-  sort(user.begin(), user.end(),
-       [](const User &a, const User &b) { return a.username < b.username; });
+
   int inputUser;
   bool running = true;
   while (running) {
@@ -53,6 +52,7 @@ void adminMenu(const User &userlogged, vector<User> &user,
       break;
     case 7:
       running = false;
+      break;
     default:
       cout << "Not In Option\n";
     }
@@ -109,7 +109,7 @@ void banUserAccount(vector<User> &user) {
   auto pos =
       lower_bound(user.begin(), user.end(), userId,
                   [](const User &a, string Id) { return a.userId < Id; });
-  if (pos != user.end() && pos->username == userId) {
+  if (pos != user.end() && pos->userId == userId) {
     cout << "Account Found : " << pos->userId << " | " << pos->username << endl;
     cout << "1. Ban Acccount\n";
     cout << "2. Unban Account\n";
@@ -158,7 +158,7 @@ void removeUserAccount(vector<User> &user) {
   auto pos =
       lower_bound(user.begin(), user.end(), userId,
                   [](const User &a, string id) { return a.userId < id; });
-  if (pos != user.end() && pos->username == userId) {
+  if (pos != user.end() && pos->userId == userId) {
     cout << "Account Found : " << pos->userId << " | " << pos->username << endl;
     cout << "Remove Account (y/n) ?\n";
     cin >> inputUser;
