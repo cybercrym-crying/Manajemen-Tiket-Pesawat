@@ -6,9 +6,10 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include <optional>
 using namespace std;
 
-User *loginAccount(vector<User> &user) {
+std::optional<User> loginAccount(vector<User> &user) {
   clearScreen();
   string name, pass, salt = "s$ltsh4#@", checkHash;
   cin.ignore(1000, '\n');
@@ -24,16 +25,16 @@ User *loginAccount(vector<User> &user) {
   if (pos != user.end() && pos->username == name) {
     if (pos->isActive == false) {
       cout << "This Account Not Active\n";
-      return nullptr;
+      return std::nullopt;
     }
     checkHash = picosha2::hash256_hex_string(pass + salt);
     if (!(pos->password == checkHash)) {
-      return nullptr;
+      return std::nullopt;
     }
-    return &(*pos);
+    return *pos;
   } else {
     cout << "Account Not Found, Regist First\n";
-    return nullptr;
+    return std::nullopt;
   }
 }
 
