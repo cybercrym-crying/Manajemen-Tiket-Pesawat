@@ -28,10 +28,13 @@ User *loginAccount(vector<User> &user) {
     }
     checkHash = picosha2::hash256_hex_string(pass + salt);
     if (!(pos->password == checkHash)) {
+      clearScreen();
+      cout << "Wrong Password, Try Again!\n";
       return nullptr;
     }
     return &(*pos);
   } else {
+    clearScreen();
     cout << "Account Not Found, Regist First\n";
     return nullptr;
   }
