@@ -20,6 +20,7 @@
 #include "header/utils.h"
 #include <iostream>
 #include <vector>
+#include <optional>
 using namespace std;
 
 void mainMenu(vector<User> &user, vector<Flight> &flights,
@@ -40,7 +41,7 @@ void mainMenu(vector<User> &user, vector<Flight> &flights,
     cout << "Input : ";
     cin >> input;
     if (input == "1") {
-      User *userLogged = loginAccount(user);
+      std::optional<User> userLogged = loginAccount(user);
       if (userLogged) {
         if (userLogged->role == ADMIN)
           adminMenu(*userLogged, user, flights, ticket);
