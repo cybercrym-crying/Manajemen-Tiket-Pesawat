@@ -29,16 +29,20 @@ std::optional<User> loginAccount(vector<User> &user) {
     }
     checkHash = picosha2::hash256_hex_string(pass + salt);
     if (!(pos->password == checkHash)) {
-      return std::nullopt;
+      clearScreen();
+      cout << "Wrong Password, Try Again!\n";
+        return std::nullopt;
     }
     return *pos;
   } else {
+    clearScreen();
     cout << "Account Not Found, Regist First\n";
     return std::nullopt;
   }
 }
 
 void registerAccount(vector<User> &user) {
+  clearScreen();
   string name, pass, salt = "s$ltsh4#@";
   cin.ignore(1000, '\n');
   cout << "Input Name : ";
@@ -63,7 +67,7 @@ void registerAccount(vector<User> &user) {
 
   else {
     pass = picosha2::hash256_hex_string(pass + salt);
-    user.emplace_back(name, pass, true, CUSTOMER);
+    user.emplace_back(generateIdUser(user), name, pass, true, CUSTOMER);
     saveUserFile(user);
     cout << "Registration Succes\n";
     sort(user.begin(), user.end(),

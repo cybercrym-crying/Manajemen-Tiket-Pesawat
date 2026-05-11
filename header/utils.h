@@ -8,6 +8,7 @@ void clearScreen();
 void refreshPendingTicket(vector<Ticket> &ticket, vector<Flight> &flights);
 string generateId(vector<Flight> &flights);
 string generateIdTicket(vector<Ticket> &ticket);
+string generateIdUser(vector<User> &user);
 string toStringRole(Role &role);
 bool haveSymbol(string username);
 bool checkIsDigit(string &x);

@@ -4,4 +4,4 @@
 #include <vector>
 using namespace std;
 
-void viewFlight(const vector<Flight> &flights, string username, Role role);
+void viewFlight(const vector<Flight> &flights, const User &userlogged);

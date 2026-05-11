@@ -4,10 +4,10 @@
 #include <vector>
 using namespace std;
 
-void customerMenu(const string username, vector<User> &user,
-                  vector<Flight> &flights, vector<Ticket> &ticket);
+void customerMenu(User &userlogged, vector<User> &user, vector<Flight> &flights,
+                  vector<Ticket> &ticket);
 void bookingTicket(vector<Flight> &flights, vector<Ticket> &ticket,
-                   const string username, Role role);
-void payTicket(vector<Ticket> &ticket, const string username);
+                   const User &userlogged);
+void payTicket(vector<Ticket> &ticket, const User &userlogged);
 void cancelTicket(vector<Flight> &flights, vector<Ticket> &ticket,
-                  const string username);
+                  const User &userlogged);

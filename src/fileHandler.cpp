@@ -24,55 +24,60 @@ int loadFile(vector<User> &user, vector<Ticket> &ticket,
     if (getline(accountFile, header)) {
     }
     while (getline(accountFile, line)) {
-      stringstream ss(line);
-      while (getline(ss, word, ',')) {
-        temp.emplace_back(word);
+      if (!(line.empty())) {
+        stringstream ss(line);
+        while (getline(ss, word, ',')) {
+          temp.emplace_back(word);
+        }
+        if (temp[3] == "true") {
+          isActive = true;
+        } else {
+          isActive = false;
+        }
+        if (temp[4] == "ADMIN") {
+          role = ADMIN;
+        } else if (temp[4] == "AIRLINE") {
+          role = AIRLINE;
+        } else {
+          role = CUSTOMER;
+        }
+        user.emplace_back(temp[0], temp[1], temp[2], isActive, role);
+        temp.clear();
       }
-      if (temp[2] == "true") {
-        isActive = true;
-      } else {
-        isActive = false;
-      }
-      if (temp[3] == "ADMIN") {
-        role = ADMIN;
-      } else if (temp[3] == "AIRLINE") {
-        role = AIRLINE;
-      } else {
-        role = CUSTOMER;
-      }
-      user.emplace_back(temp[0], temp[1], isActive, role);
-      temp.clear();
     }
-
     if (getline(flightFile, header)) {
     }
     while (getline(flightFile, line)) {
-      stringstream ss(line);
-      string word;
-      while (getline(ss, word, ',')) {
-        temp.emplace_back(word);
+      if (!(line.empty())) {
+        stringstream ss(line);
+        string word;
+        while (getline(ss, word, ',')) {
+          temp.emplace_back(word);
+        }
+        flights.emplace_back(temp[0], temp[1], temp[2], temp[3], temp[4],
+                             stoi(temp[5]), stoi(temp[6]));
+        temp.clear();
       }
-      flights.emplace_back(temp[0], temp[1], temp[2], temp[3], temp[4],
-                           stoi(temp[5]), stoi(temp[6]));
-      temp.clear();
     }
-
     if (getline(ticketFile, header)) {
     }
     while (getline(ticketFile, line)) {
-      stringstream ss(line);
-      string word;
-      while (getline(ss, word, ',')) {
-        temp.emplace_back(word);
+      if (!(line.empty())) {
+        stringstream ss(line);
+        string word;
+        while (getline(ss, word, ',')) {
+          temp.emplace_back(word);
+        }
+        ticket.emplace_back(temp[0], temp[1], temp[2], temp[3], temp[4],
+                            temp[5], temp[6]);
+        temp.clear();
       }
-      ticket.emplace_back(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5]);
-      temp.clear();
     }
-    accountFile.close();
-    flightFile.close();
-    ticketFile.close();
-    return 0;
   }
+  accountFile.close();
+  flightFile.close();
+  ticketFile.close();
+  return 0;
 }
 
 void saveUserFile(vector<User> &user) {
@@ -82,10 +87,11 @@ void saveUserFile(vector<User> &user) {
     return;
 
   else {
-    userFile << "username,password,isActive,role\n";
+    userFile << "userId,username,password,isActive,role\n";
     for (auto &dataUser : user) {
       role = toStringRole(dataUser.role);
-      userFile << dataUser.username << ',' << dataUser.password << ','
+      userFile << dataUser.userId << ',' << dataUser.username << ','
+               << dataUser.password << ','
                << (dataUser.isActive ? "true" : "false") << ',' << (role)
                << '\n';
     }
@@ -99,13 +105,13 @@ void saveFlightFile(vector<Flight> &flight) {
     return;
 
   else {
-    flightFile
-        << "flightId,airlineName,origin,destination,datetime,price,capacity\n";
+    flightFile << "flightId,airlineUserId,origin,destination,datetime,price,"
+                  "capacity\n";
     for (const auto &dataFlight : flight) {
-      flightFile << dataFlight.flightID << ',' << dataFlight.airlineName << ','
-                 << dataFlight.origin << ',' << dataFlight.destination << ','
-                 << dataFlight.time << ',' << dataFlight.price << ','
-                 << dataFlight.capacity << '\n';
+      flightFile << dataFlight.flightID << ',' << dataFlight.airlineUserID
+                 << ',' << dataFlight.origin << ',' << dataFlight.destination
+                 << ',' << dataFlight.departureTime << ',' << dataFlight.price
+                 << ',' << dataFlight.capacity << '\n';
     }
     flightFile.close();
   }
@@ -117,13 +123,14 @@ void saveTicketFile(vector<Ticket> &ticket) {
     return;
 
   else {
-    ticketFile << "ticketId,flightId,customerName,bookingStatus,seatNumber,"
-                  "pendingLimit\n";
+    ticketFile
+        << "ticketId,flightId,UserId,customerName,bookingStatus,seatNumber,"
+           "pendingLimit\n";
     for (const auto &dataTicket : ticket) {
       ticketFile << dataTicket.ticketID << ',' << dataTicket.flightID << ','
-                 << dataTicket.customerName << ',' << dataTicket.bookingStatus
-                 << ',' << dataTicket.seatNumber << ',' << dataTicket.date
-                 << '\n';
+                 << dataTicket.userID << ',' << dataTicket.customerName << ','
+                 << dataTicket.bookingStatus << ',' << dataTicket.seatNumber
+                 << ',' << dataTicket.bookingDate << '\n';
     }
     ticketFile.close();
   }
