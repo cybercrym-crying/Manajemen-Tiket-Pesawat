@@ -6,11 +6,12 @@
 #include <algorithm>
 #include <cstddef>
 #include <iostream>
-#include <vector>
+#include <limits>
 #include <optional>
+#include <vector>
 using namespace std;
 
-string trim(const string &str){
+string trim(const string &str) {
   size_t start = str.find_first_not_of(" \t\r\n");
   size_t end = str.find_last_not_of(" \t\r\n");
   return (start == string::npos) ? "" : str.substr(start, end - start + 1);
@@ -19,16 +20,18 @@ string trim(const string &str){
 std::optional<User> loginAccount(vector<User> &user) {
   clearScreen();
   string name, pass, salt = "s$ltsh4#@", checkHash;
-  cin.ignore(1000, '\n');
   cout << "Input Name : ";
   getline(cin, name);
   cout << "Input Pass : ";
   getline(cin, pass);
+
   sort(user.begin(), user.end(),
        [](const User &a, const User &b) { return a.username < b.username; });
-  auto pos = lower_bound(
-      user.begin(), user.end(), name,
-      [](const User &a, string username) { return a.username < username; });
+  auto pos = lower_bound(user.begin(), user.end(), name,
+                         [](const User &a, const string &username) {
+                           return a.username < username;
+                         });
+
   if (pos != user.end() && pos->username == name) {
     if (pos->isActive == false) {
       cout << "This Account Not Active\n";
@@ -38,7 +41,7 @@ std::optional<User> loginAccount(vector<User> &user) {
     if (!(pos->password == checkHash)) {
       clearScreen();
       cout << "Wrong Password, Try Again!\n";
-        return std::nullopt;
+      return std::nullopt;
     }
     return *pos;
   } else {
@@ -48,61 +51,39 @@ std::optional<User> loginAccount(vector<User> &user) {
   }
 }
 
-
-
 void registerAccount(vector<User> &user) {
   clearScreen();
   string name, pass, salt = "s$ltsh4#@";
-  cin.ignore(1000, '\n');
   cout << "Input Name : ";
   getline(cin, name);
   name = trim(name);
   cout << "Input Pass : ";
   getline(cin, pass);
-  sort(user.begin(), user.end(),
-       [](const User &a, const User &b) { return a.username < b.username; });
   auto it = lower_bound(
       user.begin(), user.end(), name,
       [](const User &a, const string &b) { return a.username < b; });
 
-  if (name.empty()){
-    cout << "Name cannot be empty or spaces!\n";
-    return;
-  }
-
-  if (pass.empty()){
-    cout << "Password Cannot be empty!\n";
-    return;
-  }
-
-  if (name.length() < 3 || name.length() > 20){
-    cout << "Name Must Be Between 3-20 characters\n";
-    return;
-  }
-
-  if(pass.length() < 6){
-    cout << "Password must be At least 6 characters\n";
-    return;
-  }
-
-  
-
   if (it != user.end() && it->username == name) {
-    cout << "Username Already User By Another User\n";
+    cout << "Username Already Used By Another User\n";
     return;
   }
-  if (haveSymbol(name)) {
-    cout << "Name Cannot Contain Symbol\n";
+  if (haveSymbol(name) || checkIsDigit(name) ||
+      all_of(name.begin(), name.end(), ::isspace)) {
+    cout << "Name Cannot Contain Symbol, Digit or Empty\n";
     cout << "Failed To Add Account\n";
     return;
   }
-
-  else {
-    pass = picosha2::hash256_hex_string(pass + salt);
-    user.emplace_back(generateIdUser(user), name, pass, true, CUSTOMER);
-    saveUserFile(user);
-    cout << "Registration Succes\n";
-    sort(user.begin(), user.end(),
-         [](const User &a, const User &b) { return a.username < b.username; });
+  if (pass.size() <= 5 || !(haveSymbol(pass) || !(checkIsDigit(pass)))) {
+    cout << "Password Must Be > 5 Length, Containt Symbol (#$$) and Digit "
+            "(123)\n";
+    return;
   }
+
+  sort(user.begin(), user.end(),
+       [](const User &a, const User &b) { return a.userId < b.userId; });
+
+  pass = picosha2::hash256_hex_string(pass + salt);
+  user.emplace_back(generateIdUser(user), name, pass, true, CUSTOMER);
+  saveUserFile(user);
+  cout << "Registration Succes\n";
 }

@@ -8,5 +8,7 @@ void airlineMenu(const User &userlogged, vector<User> &user,
 void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
                           const User &userlogged);
 void addFlightData(vector<Flight> &flights, const User &userlogged);
-void deleteFlightData(vector<Flight> &flights, const User &userlogged);
-void editFlightData(vector<Flight> &flights, const User &userlogged);
+void deleteFlightData(vector<Flight> &flights, const vector<User> &user,
+                      const vector<Ticket> &ticket, const User &userlogged);
+void editFlightData(vector<Flight> &flights, const vector<User> &user,
+                    const User &userlogged);
