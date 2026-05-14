@@ -5,34 +5,59 @@
 #include "../header/utils.h"
 #include <algorithm>
 #include <chrono>
-#include <ctime>
-#include <iomanip>
 #include <iostream>
-#include <sstream>
+#include <limits>
 #include <string>
+#include <thread>
 #include <vector>
 using namespace std;
-
+using namespace chrono;
 void airlineMenu(const User &userlogged, vector<User> &user,
                  vector<Flight> &flights, vector<Ticket> &ticket) {
   string inputUser;
   while (true) {
+    this_thread::sleep_for(seconds(2));
+    clearScreen();
     cout << "1. View Transaction" << endl;
     cout << "2. Add New Flight Schedule" << endl;
     cout << "3. Remove Flight" << endl;
-    cout << "4. View Flight" << endl;
-    cout << "5. Exit" << endl;
+    cout << "4. Edit Flight" << endl;
+    cout << "5. View Flight" << endl;
+    cout << "6. Exit" << endl;
     cout << "Input User : ";
     cin >> inputUser;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
+      auto getNum = [](const string &s) {
+        size_t pos = s.find_first_of("0123456789");
+        return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
+      };
+      return getNum(a.flightID) < getNum(b.flightID);
+    });
+    sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
+      auto getNum = [](const string &s) {
+        size_t pos = s.find_first_of("0123456789");
+        return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
+      };
+      return getNum(a.ticketID) < getNum(b.ticketID);
+    });
+
+    refreshPendingTicket(ticket, flights);
     if (inputUser == "1") {
       viewTotalTransaction(flights, ticket, userlogged);
+      cout << "Press Enter To Continue...";
+      cin.get();
     } else if (inputUser == "2") {
       addFlightData(flights, userlogged);
     } else if (inputUser == "3") {
-      deleteFlightData(flights, userlogged);
+      deleteFlightData(flights, user, ticket, userlogged);
     } else if (inputUser == "4") {
-      viewFlight(flights, userlogged);
+      editFlightData(flights, user, userlogged);
     } else if (inputUser == "5") {
+      viewFlight(flights, userlogged, user);
+      cout << "Press Enter To Continue...";
+      cin.get();
+    } else if (inputUser == "6") {
       return;
     }
   }
@@ -44,14 +69,20 @@ void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
   int sum = 0;
 
   sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
-    return a.airlineUserID < b.airlineUserID;
+    auto getNum = [](const string &s) {
+      size_t pos = s.find_first_of("0123456789");
+      return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
+    };
+    return getNum(a.airlineUserID) < getNum(b.airlineUserID);
   });
-
   sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
-    return a.flightID < b.flightID;
+    auto getNum = [](const string &s) {
+      size_t pos = s.find_first_of("0123456789");
+      return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
+    };
+    return getNum(a.flightID) < getNum(b.flightID);
   });
 
-  // Pakai lower_bound + upper_bound sebagai pengganti equal_range
   auto startF = lower_bound(
       flights.begin(), flights.end(), userlogged.userId,
       [](const Flight &f, const string &id) { return f.airlineUserID < id; });
@@ -60,7 +91,6 @@ void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
       [](const string &id, const Flight &f) { return id < f.airlineUserID; });
 
   for (auto itF = startF; itF != endF; ++itF) {
-
     auto startT = lower_bound(
         ticket.begin(), ticket.end(), itF->flightID,
         [](const Ticket &t, const string &fId) { return t.flightID < fId; });
@@ -68,32 +98,43 @@ void viewTotalTransaction(vector<Flight> &flights, vector<Ticket> &ticket,
         ticket.begin(), ticket.end(), itF->flightID,
         [](const string &fId, const Ticket &t) { return fId < t.flightID; });
 
+    int count = 0;
     for (auto itT = startT; itT != endT; ++itT) {
-      sum += itF->price;
+      if (itT->bookingStatus == "Paid") {
+        sum += itF->price;
+        count++;
+      }
     }
+    cout << "Flight " << itF->flightID << " | " << itF->origin << " -> "
+         << itF->destination << " | Tickets Sold: " << count
+         << " | Revenue: " << (count * itF->price) << "\n";
   }
 
-  cout << "Total Transaction : " << sum << endl;
+  cout << "Total Revenue : " << sum << endl;
 }
+
 void addFlightData(vector<Flight> &flights, const User &userlogged) {
   clearScreen();
-  string id = generateId(flights);
   string origin, dest, date_time;
+  char inputUser;
   int price, capacity;
-  auto timeNow = chrono::system_clock::now();
-  time_t t = chrono::system_clock::to_time_t(timeNow);
-  ostringstream oss;
-  oss << put_time(localtime(&t), "%Y-%m-%d %H:%M");
-  string timeZoned = oss.str();
-  cin.ignore(1000, '\n');
   cout << "Input Origin : ";
   getline(cin, origin);
+  if (haveSymbol(origin) || checkIsDigit(origin)) {
+    cout << "Origin Cannot Containt Symbol or Digit\n";
+    return;
+  }
   cout << "Input Destination : ";
   getline(cin, dest);
+  if (haveSymbol(dest) || checkIsDigit(dest)) {
+    cout << "Destination Cannot Containt Symbol or Digit\n";
+    return;
+  }
   cout << "Input Date Time (YYYY-MM-DD H:M): ";
   getline(cin, date_time);
   if (!(isValidDateTime(date_time))) {
-    cout << "Failed, Wrong Date Time Format, Example (2026-03-10 23:59)\n";
+    cout << "Failed, Wrong Date Time Format Or Date Is In The Past, Example "
+            "(2026-03-10 23:59)\n";
     return;
   }
   cout << "Input Price : ";
@@ -101,6 +142,10 @@ void addFlightData(vector<Flight> &flights, const User &userlogged) {
   if (cin.fail()) {
     cout << "Failed, Price Must Integer\n";
     cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    return;
+  } else if (price < 1) {
+    cout << "Failed, Price Cannot Empty Or Mines\n";
     return;
   }
   cout << "Input Capacity : ";
@@ -108,110 +153,109 @@ void addFlightData(vector<Flight> &flights, const User &userlogged) {
   if (cin.fail()) {
     cout << "Failed, Capacity Must Integer\n";
     cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    return;
+  } else if (capacity < 1) {
+    cout << "Failed, Capacity Cannot Empty Or Mines\n";
     return;
   }
-  flights.emplace_back(id, userlogged.userId, origin, dest, date_time, price,
-                       capacity);
-  saveFlightFile(flights);
+  cout << "Added New Flight(y/n)? : ";
+  cin >> inputUser;
+  if (inputUser == 'Y' || inputUser == 'y') {
+
+    string id = generateId(flights);
+    flights.emplace_back(id, userlogged.userId, origin, dest, date_time, price,
+                         capacity);
+    cout << "Added Flight Succesfull\n";
+    saveFlightFile(flights);
+  } else {
+    cout << "Added Flight Canceled\n";
+  }
 }
 
-void deleteFlightData(vector<Flight> &flights, const User &userlogged) {
-
+void deleteFlightData(vector<Flight> &flights, const vector<User> &user,
+                      const vector<Ticket> &ticket, const User &userlogged) {
   clearScreen();
   string inputId;
   char inputUser;
   if (userlogged.role == AIRLINE) {
-    viewFlight(flights, userlogged);
+    viewFlight(flights, userlogged, user);
     cout << "Input Flight Id : ";
     cin >> inputId;
-    auto pos = lower_bound(
-        flights.begin(), flights.end(), inputId,
-        [](const Flight &id, string inputId) { return id.flightID < inputId; });
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    auto pos = lower_bound(flights.begin(), flights.end(), inputId,
+                           [](const Flight &id, const string &inputId) {
+                             return id.flightID < inputId;
+                           });
     if (pos != flights.end() && pos->flightID == inputId &&
         pos->airlineUserID == userlogged.userId) {
       cout << "Flight Found : " << pos->flightID << " | " << pos->airlineUserID
            << endl;
+      auto it = lower_bound(
+          ticket.begin(), ticket.end(), inputId,
+          [](const Ticket &a, const string &b) { return a.flightID < b; });
+      if (it != ticket.end() && it->flightID == pos->flightID &&
+          it->bookingStatus == "Paid") {
+        cout << "Sorry, there is already a customer who has paid for the "
+                "ticket\n";
+        return;
+      }
       cout << "Delete (y/n): ";
       cin >> inputUser;
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
       if (inputUser == 'y' || inputUser == 'Y') {
+        cout << "Delete Flight Succesfull\n";
         flights.erase(pos);
         saveFlightFile(flights);
       } else {
         cout << "Delete Flight Canceled\n";
       }
-    } else
+    } else {
       cout << "Flight Id Not Found\n";
+    }
   }
 }
 
-void editFlightData(vector<Flight> &flights, const User &userlogged) {
+void editFlightData(vector<Flight> &flights, const vector<User> &user,
+                    const User &userlogged) {
   clearScreen();
   string inputId;
-  string ori, dest, price, capacity;
+  int price, capacity;
   char inputUser;
-  viewFlight(flights, userlogged);
+  viewFlight(flights, userlogged, user);
   cout << "Input Flight Id : ";
   cin >> inputId;
-  auto pos = lower_bound(
-      flights.begin(), flights.end(), inputId,
-      [](const Flight &id, string inputId) { return id.flightID < inputId; });
+  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  auto pos = lower_bound(flights.begin(), flights.end(), inputId,
+                         [](const Flight &id, const string &inputId) {
+                           return id.flightID < inputId;
+                         });
   if (pos != flights.end() && pos->flightID == inputId &&
       pos->airlineUserID == userlogged.userId) {
     cout << "Flight Found : " << pos->flightID << " | " << pos->airlineUserID
          << endl;
     cout << "Edit? (y/n): ";
     cin >> inputUser;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     if (inputUser == 'y' || inputUser == 'Y') {
-      cin.ignore(1000, '\n');
-      cout << "Enter if you don't want to change!!";
-      cout << "Input Origin : ";
-      getline(cin, ori);
-      cout << "Input Destination : ";
-      getline(cin, dest);
-      cout << "Input Price : ";
-      getline(cin, price);
-      cout << "Input Capacity";
-      getline(cin, capacity);
-      if (!(ori.empty()) && checkIsDigit(ori) == false) {
-        pos->origin = ori;
+      cout << "Input Capacity : ";
+      cin >> capacity;
+      if (cin.fail()) {
+        cout << "Failed, Capacity Must Integer\n";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return;
+      } else if (pos->capacity < 1) {
+        cout << "Failed, Capacity Cannot Empty Or Mines\n";
+        return;
       }
-      if (!(dest.empty()) && checkIsDigit(dest) == false) {
-        pos->destination = dest;
-      }
-      if (!(price.empty())) {
-        try {
-          if (stoi(price) < 0) {
-            throw runtime_error("Mines Price Not Possible\n");
-          }
-          pos->price = stoi(price);
-        } catch (const invalid_argument &e) {
-          cerr << "Price Must Be Integet Not Alfabet\n";
-        } catch (const out_of_range &e) {
-          cerr << "Input To Large\n";
-        } catch (const runtime_error &e) {
-          cerr << e.what() << endl;
-        }
-      }
-
-      if (!(capacity.empty())) {
-        try {
-          if (stoi(capacity) < 0) {
-            throw runtime_error("Mines Seat Capacity Not Possible\n");
-          }
-          pos->capacity = stoi(capacity);
-        } catch (const invalid_argument &e) {
-          cerr << "Capacity Must Be Integer Not Alfabet\n";
-        } catch (const out_of_range &e) {
-          cerr << "Input To Large\n";
-        } catch (const runtime_error &e) {
-          cerr << e.what() << endl;
-        }
-      }
-
+      pos->capacity = capacity;
+      cout << "Edit Flight Succescull\n";
       saveFlightFile(flights);
     } else {
       cout << "Edit Flight Canceled\n";
     }
-  } else
-    cout << "Flight Id Not Found \n";
+  } else {
+    cout << "Flight Id Not Found\n";
+  }
 }

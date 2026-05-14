@@ -5,7 +5,6 @@
 #define NOMCX
 #define NOIME
 #define NOMINMAX
-// Override byte sebelum windows.h masuk
 #define byte win_byte
 #include <windows.h>
 #undef byte
@@ -17,10 +16,10 @@
 #include "header/customer.h"
 #include "header/fileHandler.h"
 #include "header/types.h"
-#include "header/utils.h"
 #include <iostream>
-#include <vector>
+#include <limits>
 #include <optional>
+#include <vector>
 using namespace std;
 
 void mainMenu(vector<User> &user, vector<Flight> &flights,
@@ -40,13 +39,16 @@ void mainMenu(vector<User> &user, vector<Flight> &flights,
     cout << "3. Exit\n";
     cout << "Input : ";
     cin >> input;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
     if (input == "1") {
       std::optional<User> userLogged = loginAccount(user);
       if (userLogged) {
         if (userLogged->role == ADMIN)
           adminMenu(*userLogged, user, flights, ticket);
         if (userLogged->role == CUSTOMER)
-          customerMenu(*userLogged, user, flights, ticket);
+          cout << userLogged->role;
+        customerMenu(*userLogged, user, flights, ticket);
         if (userLogged->role == AIRLINE)
           airlineMenu(*userLogged, user, flights, ticket);
       }
@@ -56,7 +58,7 @@ void mainMenu(vector<User> &user, vector<Flight> &flights,
       exit(0);
     }
   }
-};
+}
 
 int main() {
   vector<User> user;

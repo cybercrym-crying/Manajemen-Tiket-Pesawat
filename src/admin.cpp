@@ -7,16 +7,19 @@
 #include "../header/types.h"
 #include "../header/utils.h"
 #include <algorithm>
+#include <chrono>
 #include <iostream>
+#include <limits>
+#include <thread>
 #include <vector>
 using namespace std;
-
+using namespace chrono;
 void adminMenu(const User &userlogged, vector<User> &user,
                vector<Flight> &flights, vector<Ticket> &ticket) {
-
   int inputUser;
-  bool running = true;
-  while (running) {
+  while (true) {
+    this_thread::sleep_for(seconds(2));
+    clearScreen();
     cout << "Greeting " << userlogged.username << endl;
     cout << "1. View List Account\n";
     cout << "2. Add New Account\n";
@@ -27,12 +30,41 @@ void adminMenu(const User &userlogged, vector<User> &user,
     cout << "7. Exit\n";
     cout << "Input : ";
     cin >> inputUser;
+    sort(user.begin(), user.end(), [](const User &a, const User &b) {
+      auto getNum = [](const string &s) {
+        size_t pos = s.find_first_of("0123456789");
+        return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
+      };
+      return getNum(a.userId) < getNum(b.userId);
+    });
+    sort(flights.begin(), flights.end(), [](const Flight &a, const Flight &b) {
+      auto getNum = [](const string &s) {
+        size_t pos = s.find_first_of("0123456789");
+        return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
+      };
+      return getNum(a.flightID) < getNum(b.flightID);
+    });
+    sort(ticket.begin(), ticket.end(), [](const Ticket &a, const Ticket &b) {
+      auto getNum = [](const string &s) {
+        size_t pos = s.find_first_of("0123456789");
+        return (pos != string::npos) ? stoi(s.substr(pos)) : 0;
+      };
+      return getNum(a.ticketID) < getNum(b.ticketID);
+    });
 
-    if (cin.fail())
+    refreshPendingTicket(ticket, flights);
+    if (cin.fail()) {
+      cin.clear();
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
       continue;
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
     switch (inputUser) {
     case 1:
       viewListAccount(user);
+      cout << "Press Enter To Continue...";
+      cin.get();
       break;
     case 2:
       addNewAccount(user);
@@ -44,14 +76,17 @@ void adminMenu(const User &userlogged, vector<User> &user,
       removeUserAccount(user);
       break;
     case 5:
-      viewFlight(flights, userlogged);
+      viewFlight(flights, userlogged, user);
+      cout << "Press Enter To Continue...";
+      cin.get();
       break;
     case 6:
-
       viewHistoryTicket(ticket, userlogged);
+      cout << "Press Enter To Continue...";
+      cin.get();
       break;
     case 7:
-      running = false;
+      return;
       break;
     default:
       cout << "Not In Option\n";
@@ -78,22 +113,38 @@ void viewListAccount(const vector<User> &user) {
 
 void addNewAccount(vector<User> &user) {
   clearScreen();
-  string username, password, salt = "s$ltsh4#@";
-  ;
-  cin.ignore(1000, '\n');
-  cout << "Input Airline Name : ";
-  getline(cin, username);
-  if (haveSymbol(username)) {
-    cout << "Name Cannot Contain Symbol\n";
+  string name, pass, salt = "s$ltsh4#@";
+  cout << "Input Name : ";
+  getline(cin, name);
+  cout << "Input Pass : ";
+  getline(cin, pass);
+  auto it = lower_bound(
+      user.begin(), user.end(), name,
+      [](const User &a, const string &b) { return a.username < b; });
+
+  if (it != user.end() && it->username == name) {
+    cout << "Username Already Used By Another User\n";
+    return;
+  }
+  if (haveSymbol(name) || checkIsDigit(name) ||
+      all_of(name.begin(), name.end(), ::isspace)) {
+    cout << "Name Cannot Contain Symbol, Digit or Empty\n";
     cout << "Failed To Add Account\n";
     return;
   }
-  cout << "Input Password : ";
-  getline(cin, password);
-  user.emplace_back(generateIdUser(user), username,
-                    picosha2::hash256_hex_string(password + salt), true,
-                    AIRLINE);
+  if (pass.size() <= 5 || !(haveSymbol(pass) || !(checkIsDigit(pass)))) {
+    cout << "Password Must Be > 5 Length, Containt Symbol (#$$) and Digit "
+            "(123)\n";
+    return;
+  }
+
+  sort(user.begin(), user.end(),
+       [](const User &a, const User &b) { return a.userId < b.userId; });
+
+  pass = picosha2::hash256_hex_string(pass + salt);
+  user.emplace_back(generateIdUser(user), name, pass, true, AIRLINE);
   saveUserFile(user);
+  cout << "Registration Succes\n";
 }
 
 void banUserAccount(vector<User> &user) {
@@ -101,24 +152,23 @@ void banUserAccount(vector<User> &user) {
   string userId;
   char inputUser;
   viewListAccount(user);
-  cin.ignore(1000, '\n');
   cout << "Input User Id : ";
   getline(cin, userId);
-  sort(user.begin(), user.end(),
-       [](const User &a, const User &b) { return a.userId < b.userId; });
-  auto pos =
-      lower_bound(user.begin(), user.end(), userId,
-                  [](const User &a, string Id) { return a.userId < Id; });
+  auto pos = lower_bound(
+      user.begin(), user.end(), userId,
+      [](const User &a, const string &Id) { return a.userId < Id; });
   if (pos != user.end() && pos->userId == userId) {
     cout << "Account Found : " << pos->userId << " | " << pos->username << endl;
-    cout << "1. Ban Acccount\n";
+    cout << "1. Ban Account\n";
     cout << "2. Unban Account\n";
     cout << "3. Exit\n";
     cout << "Input Menu : ";
     cin >> inputUser;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     if (inputUser == '1') {
       cout << "Ban Account (y/n) : ";
       cin >> inputUser;
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
       if (inputUser == 'Y' || inputUser == 'y') {
         pos->isActive = false;
         cout << "Account Banned\n";
@@ -129,20 +179,18 @@ void banUserAccount(vector<User> &user) {
     } else if (inputUser == '2') {
       cout << "Unban Account (y/n) : ";
       cin >> inputUser;
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
       if (inputUser == 'Y' || inputUser == 'y') {
         pos->isActive = true;
-        cout << "Account Unban\n";
+        cout << "Account Unbanned\n";
         saveUserFile(user);
-
       } else {
         cout << "Failed To Unban\n";
       }
     } else {
       return;
     }
-  }
-
-  else {
+  } else {
     cout << "Account Not Found\n";
   }
 }
@@ -152,19 +200,20 @@ void removeUserAccount(vector<User> &user) {
   string userId;
   char inputUser;
   viewListAccount(user);
-  cin.ignore(1000, '\n');
-  cout << "Input Username : ";
+  cout << "Input User Id : ";
   getline(cin, userId);
-  auto pos =
-      lower_bound(user.begin(), user.end(), userId,
-                  [](const User &a, string id) { return a.userId < id; });
+
+  auto pos = lower_bound(
+      user.begin(), user.end(), userId,
+      [](const User &a, const string &id) { return a.userId < id; });
   if (pos != user.end() && pos->userId == userId) {
     cout << "Account Found : " << pos->userId << " | " << pos->username << endl;
     cout << "Remove Account (y/n) ?\n";
     cin >> inputUser;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     if (inputUser == 'Y' || inputUser == 'y') {
       user.erase(pos);
-      cout << "Account Remove\n";
+      cout << "Account Removed\n";
       saveUserFile(user);
     } else {
       cout << "Failed To Remove\n";
