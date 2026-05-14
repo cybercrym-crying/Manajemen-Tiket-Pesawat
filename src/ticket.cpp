@@ -10,7 +10,6 @@ void viewHistoryTicket(vector<Ticket> &ticket, const User &userlogged) {
   clearScreen();
   Table tableTicket;
   int i = 1;
-  string inputUser;
 
   tableTicket.add_row({"No", "Ticket Id", "Flight Id", "User Id", "Username",
                        "Ticket Status", "Seat Number", "Pending Limit"});
@@ -24,18 +23,14 @@ void viewHistoryTicket(vector<Ticket> &ticket, const User &userlogged) {
         i++;
       }
     }
-  }
-
-  else if (userlogged.role == ADMIN) {
+  } else if (userlogged.role == ADMIN) {
     for (auto &data : ticket) {
       tableTicket.add_row({to_string(i), data.ticketID, data.flightID,
                            data.userID, data.customerName, data.bookingStatus,
                            data.seatNumber, data.bookingDate});
       i++;
     }
-  }
-
-  else if (userlogged.role == AIRLINE) {
+  } else if (userlogged.role == AIRLINE) {
     for (auto &data : ticket) {
       if (data.userID == userlogged.userId) {
         tableTicket.add_row({to_string(i), data.ticketID, data.flightID,
@@ -44,7 +39,11 @@ void viewHistoryTicket(vector<Ticket> &ticket, const User &userlogged) {
         i++;
       }
     }
-  } else if (i == 1)
+  }
+
+  if (i == 1) {
     cout << "No Ticket History\n";
-  cout << tableTicket << endl;
+  } else {
+    cout << tableTicket << endl;
+  }
 }

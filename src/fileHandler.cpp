@@ -6,14 +6,16 @@
 #include <sstream>
 #include <vector>
 using namespace std;
-
+static void stripCR(string &s) {
+  if (!s.empty() && s.back() == '\r')
+    s.pop_back();
+}
 int loadFile(vector<User> &user, vector<Ticket> &ticket,
              vector<Flight> &flights) {
   ifstream accountFile("data/account.csv");
   ifstream flightFile("data/flight.csv");
   ifstream ticketFile("data/ticket.csv");
   string line, word, header;
-  stringstream ss;
   bool isActive;
   Role role;
   vector<string> temp;
@@ -24,6 +26,7 @@ int loadFile(vector<User> &user, vector<Ticket> &ticket,
     if (getline(accountFile, header)) {
     }
     while (getline(accountFile, line)) {
+      stripCR(line);
       if (!(line.empty())) {
         stringstream ss(line);
         while (getline(ss, word, ',')) {
@@ -48,6 +51,7 @@ int loadFile(vector<User> &user, vector<Ticket> &ticket,
     if (getline(flightFile, header)) {
     }
     while (getline(flightFile, line)) {
+      stripCR(line);
       if (!(line.empty())) {
         stringstream ss(line);
         string word;
@@ -62,6 +66,7 @@ int loadFile(vector<User> &user, vector<Ticket> &ticket,
     if (getline(ticketFile, header)) {
     }
     while (getline(ticketFile, line)) {
+      stripCR(line);
       if (!(line.empty())) {
         stringstream ss(line);
         string word;
@@ -85,7 +90,6 @@ void saveUserFile(vector<User> &user) {
   string role;
   if (!(userFile.is_open()))
     return;
-
   else {
     userFile << "userId,username,password,isActive,role\n";
     for (auto &dataUser : user) {
@@ -103,7 +107,6 @@ void saveFlightFile(vector<Flight> &flight) {
   ofstream flightFile("data/flight.csv");
   if (!(flightFile.is_open()))
     return;
-
   else {
     flightFile << "flightId,airlineUserId,origin,destination,datetime,price,"
                   "capacity\n";
@@ -121,7 +124,6 @@ void saveTicketFile(vector<Ticket> &ticket) {
   ofstream ticketFile("data/ticket.csv");
   if (!(ticketFile.is_open()))
     return;
-
   else {
     ticketFile
         << "ticketId,flightId,UserId,customerName,bookingStatus,seatNumber,"
