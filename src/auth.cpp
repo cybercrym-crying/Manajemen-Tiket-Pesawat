@@ -4,10 +4,17 @@
 #include "../header/types.h"
 #include "../header/utils.h"
 #include <algorithm>
+#include <cstddef>
 #include <iostream>
 #include <vector>
 #include <optional>
 using namespace std;
+
+string trim(const string &str){
+  size_t start = str.find_first_not_of(" \t\r\n");
+  size_t end = str.find_last_not_of(" \t\r\n");
+  return (start == string::npos) ? "" : str.substr(start, end - start + 1);
+}
 
 std::optional<User> loginAccount(vector<User> &user) {
   clearScreen();
@@ -41,12 +48,15 @@ std::optional<User> loginAccount(vector<User> &user) {
   }
 }
 
+
+
 void registerAccount(vector<User> &user) {
   clearScreen();
   string name, pass, salt = "s$ltsh4#@";
   cin.ignore(1000, '\n');
   cout << "Input Name : ";
   getline(cin, name);
+  name = trim(name);
   cout << "Input Pass : ";
   getline(cin, pass);
   sort(user.begin(), user.end(),
@@ -54,6 +64,28 @@ void registerAccount(vector<User> &user) {
   auto it = lower_bound(
       user.begin(), user.end(), name,
       [](const User &a, const string &b) { return a.username < b; });
+
+  if (name.empty()){
+    cout << "Name cannot be empty or spaces!\n";
+    return;
+  }
+
+  if (pass.empty()){
+    cout << "Password Cannot be empty!\n";
+    return;
+  }
+
+  if (name.length() < 3 || name.length() > 20){
+    cout << "Name Must Be Between 3-20 characters\n";
+    return;
+  }
+
+  if(pass.length() < 6){
+    cout << "Password must be At least 6 characters\n";
+    return;
+  }
+
+  
 
   if (it != user.end() && it->username == name) {
     cout << "Username Already User By Another User\n";
